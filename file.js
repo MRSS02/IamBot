@@ -325,6 +325,9 @@ client.on("guildDelete", guild => {
 //This sets the bot messages.
 client.on("message", async message => {
 
+try {
+
+
 if (!blacklist.includes(message.author.id)) {
 
   if (message.author.bot) return;
@@ -488,8 +491,8 @@ if (order.includes(":::")) {
 } else {
 
 if (order.includes("ccc")) {
+  const c = args.replace('ccc','')
   if (message.author.id == 307335427331850242) {
-      const c = args.replace('ccc','')
       message.delete()
       const m = message.channel.send(c)
   } else {
@@ -502,10 +505,11 @@ if (order.includes("ccc")) {
   }
 } else {
 
- if (order.includes("%%") && order.includes("/")) {
+ if (order.includes("%%")) {
      let hexcol
      let c
-     if (message.author.id == 307335427331850242) {
+     if (message.author.id == 307335427331850242 || whitelist.includes(message.author.id)) {
+       message.delete()
        if (order.includes("%%%")) {
          hexcol = order.substring(order.indexOf("%%%"), order.indexOf("%%%") + 9)
          const d = args.substring(args.indexOf("%%%"), args.indexOf("%%%") + 9)
@@ -515,35 +519,23 @@ if (order.includes("ccc")) {
          c = args.replace("%%", '')
          hexcol = "00aaff"
        }
+       if (order.includes("/")) {
        msg1 = c.substring(0, c.indexOf("/"))
        msg2 = c.replace(msg1, '')
        msg2 = msg2.substring(1)
+       } else {
+       msg1 = c
+       msg2 = "\u200b"
+       }
        const emb = new Discord.MessageEmbed()
-       .setColor(hexcol)
-       .addFields(
-       { name: "\u200b", value: msg2, inline: true},
-       )
-       const emb1 = new Discord.MessageEmbed()
-       .setColor(hexcol)
-       .addFields(
-       { name: msg1, value: "\u200b", inline: true},
-       )
-       const emb2 = new Discord.MessageEmbed()
        .setColor(hexcol)
        .addFields(
        { name: msg1, value: msg2, inline: true},
        )
+       if (message.author.id != 307335427331850242) emb.setTitle(`${author} told me to say`)
        if (message.channel.type === "dm") return
-       message.delete()
-       if (msg1.substring(1) == "!" || msg1.substring(1, 2) == "!" || msg1 == "!") {
-         const m = message.channel.send(emb)
-       } else {
-         if (msg2.substring(1) == "!" || msg2 == "!") {
-            const m = message.channel.send(emb1)
-         } else {
-            const m = message.channel.send(emb2)
-         }
-       }
+       const m = await message.channel.send(emb)
+
    } else {
        const m = await message.channel.send(`You're not my master, ${author}.`)
    }
@@ -822,7 +814,7 @@ if (order.includes("bot!")) {
   } else {
 
   if (order.includes("intro")) {
-    if (message.author.id == 307335427331850242 || whitelist.includes(message.author.id)) {
+
       let hexcol
       let c
         if (order.includes("%%%")) {
@@ -836,11 +828,8 @@ if (order.includes("bot!")) {
         .addFields(
         { name: `I'm a bot my master, ${author}, is developing to entertain themselves and learn to code.`, value: "I am glad to help my master and their friends. \n||I don't like helping people i don't trust, though.||", inline: true},
         )
-        message.delete()
         const m = message.channel.send(emb)
-        } else {
-        const m = await message.channel.send(`You're not my master, ${author}.`)
-        }
+
 
   } else {
 
@@ -1262,6 +1251,16 @@ if (order.includes("bot!")) {
 };
 
 };
+
+} catch (error) {
+  try {
+    client.users.cache.get("307335427331850242").send(`${error}`)
+    console.log(error)
+  } catch (f) {
+    console.log(error)
+  }
+}
+
 });
 
 //This sets the bot online.
