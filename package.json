@@ -1,0 +1,29 @@
+{
+  "name": "bot",
+  "version": "1.0.0",
+  "description": "I am Bot",
+  "main": "file.js",
+  "scripts": {
+    "test": "test 123"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://gitlab.com/MRSS/my-bot.git"
+  },
+  "keywords": [
+    "bot"
+  ],
+  "author": "MRSS",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://gitlab.com/MRSS/my-bot/issues"
+  },
+  "homepage": "https://gitlab.com/MRSS/my-bot#readme",
+  "dependencies": {
+    "discord.js": "^12.2.0",
+    "opusscript": "0.0.7",
+    "ytdl-core": "^3.2.0",
+    "ytdl-getinfo": "^1.1.0",
+    "ytsr": "^0.1.20"
+  }
+}
