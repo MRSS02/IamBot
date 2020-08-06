@@ -332,9 +332,20 @@ if (!blacklist.includes(message.author.id)) {
   const order = args.toLowerCase();
   const fchar = parseInt(args.substring(0, 18), 10)
   let link = args.substring(order.indexOf("play") + 4)
+  let author
 
 if (order.includes("!$d")) {
   message.delete()
+}
+
+try {
+if (message.guild.member(message.author).nickname == null) {
+   author = message.author.username
+} else {
+   author = message.guild.member(message.author).nickname
+}
+} catch (error) {
+  author = message.author.username
 }
 
 function sameserver(id) {
@@ -471,11 +482,7 @@ if (order.includes(":::")) {
     }
 
   } else {
-      if (message.guild.member(message.author).nickname == null) {
-      const m = await message.channel.send(`You're not my master, ${message.author.username}.`)
-      } else {
-        const m = await message.channel.send(`You're not my master, ${message.guild.member(message.author).nickname}.`)
-      }
+      const m = await message.channel.send(`You're not my master, ${author}.`)
   }
 
 } else {
@@ -488,17 +495,9 @@ if (order.includes("ccc")) {
   } else {
     if (whitelist.includes(message.author.id)) {
       message.delete()
-      if (message.guild.member(message.author).nickname == null) {
-      const m = await message.channel.send(`${message.author.username} told me to say:\n"${c}"`)
-      } else {
-      const m = await message.channel.send(`${message.guild.member(message.author).nickname} told me to say:\n"${c}."`)
-      }
+      const m = await message.channel.send(`${author} told me to say:\n"${c}."`)
     } else {
-     if (message.guild.member(message.author).nickname == null) {
-     const m = await message.channel.send(`You're not my master, ${message.author.username}.`)
-     } else {
-     const m = await message.channel.send(`You're not my master, ${message.guild.member(message.author).nickname}.`)
-    }
+     const m = await message.channel.send(`You're not my master, ${author}.`)
     }
   }
 } else {
@@ -546,11 +545,7 @@ if (order.includes("ccc")) {
          }
        }
    } else {
-     if (message.guild.member(message.author).nickname == null) {
-     const m = await message.channel.send(`You're not my master, ${message.author.username}.`)
-     } else {
-       const m = await message.channel.send(`You're not my master, ${message.guild.member(message.author).nickname}.`)
-     }
+       const m = await message.channel.send(`You're not my master, ${author}.`)
    }
 
 
@@ -621,11 +616,7 @@ if (order.includes("ccc")) {
           })
     }
   } else {
-     if (message.guild.member(message.author).nickname == null) {
-          const m = await message.channel.send(`You're not allowed to ask me for that, ${message.author.username}.`)
-    } else {
-            const m = await message.channel.send(`You're not allowed to ask me for that, ${message.guild.member(message.author).nickname}.`)
-    }
+    const m = await message.channel.send(`You're not allowed to ask me for that, ${author}.`)
   }
 
 }
@@ -670,11 +661,7 @@ if (order.includes("bot!")) {
           if (message.author.id == 307335427331850242) {
             message.channel.send(`Master, "${lastsong}" was added to the queue.`)
           } else {
-            if (message.guild.member(message.author).nickname == null) {
-            const m = await message.channel.send(`${message.author.username}, "${lastsong}" was added to the queue.`)
-            } else {
-              const m = await message.channel.send(`${message.guild.member(message.author).nickname}, "${lastsong}" was added to the queue.`)
-            }
+              const m = await message.channel.send(`${author}, "${lastsong}" was added to the queue.`)
           }
         }
       }
@@ -686,11 +673,7 @@ if (order.includes("bot!")) {
         if (message.author.id == 307335427331850242) {
           message.channel.send(`Master, enter a voice channel first.`)
         } else {
-          if (message.guild.member(message.author).nickname == null) {
-          const m = await message.channel.send(`${message.author.username}, enter a voice channel first.`)
-          } else {
-            const m = await message.channel.send(`${message.guild.member(message.author).nickname}, enter a voice channel first.`)
-          }
+            const m = await message.channel.send(`${author}, enter a voice channel first.`)
         }
       } else {
         if(!queueservers[message.guild.id]) {
@@ -716,11 +699,7 @@ if (order.includes("bot!")) {
            if (message.author.id == 307335427331850242) {
              message.channel.send(`Master, something went wrong.`)
            } else {
-             if (message.guild.member(message.author).nickname == null) {
-             const m = await message.channel.send(`${message.author.username}, something went wrong.`)
-             } else {
-               const m = await message.channel.send(`${message.guild.member(message.author).nickname}, `)
-             }
+               const m = await message.channel.send(`${author}, something went wrong.`)
            }
          }
         }
@@ -740,11 +719,7 @@ if (order.includes("bot!")) {
     if (message.author.id == 307335427331850242) {
       message.channel.send(`Master, I'm not playing any songs in this server.`)
     } else {
-      if (message.guild.member(message.author).nickname == null) {
-      const m = await message.channel.send(`${message.author.username}, I'm not playing any songs in this server.`)
-      } else {
-        const m = await message.channel.send(`${message.guild.member(message.author).nickname}, I'm not playing any songs in this server.`)
-      }
+        const m = await message.channel.send(`${author}, I'm not playing any songs in this server.`)
     }
     } else {
     let cserver = queueservers[message.guild.id]
@@ -764,13 +739,8 @@ if (order.includes("bot!")) {
         message.channel.send(`These are the next songs in the list, master:\n`)
         message.channel.send(list)
       } else {
-        if (message.guild.member(message.author).nickname == null) {
-        const m = await message.channel.send(`These are the next songs in the list, ${message.author.username}\n`)
+        const m = await message.channel.send(`These are the next songs in the list, ${author}\n`)
         message.channel.send(list)
-        } else {
-          const m = await message.channel.send(`These are the next songs in the list, ${message.guild.member(message.author).nickname}`)
-          message.channel.send(list)
-        }
       }
     } else {
       const list = new Discord.MessageEmbed().setTitle(`${message.guild}'s queue`)
@@ -782,16 +752,12 @@ if (order.includes("bot!")) {
         message.channel.send(`These are the next songs in the list, master:\n`)
         message.channel.send(list)
       } else {
-        if (message.guild.member(message.author).nickname == null) {
-        const m = await message.channel.send(`These are the next songs in the list, ${message.author.username}\n`)
+        const m = await message.channel.send(`These are the next songs in the list, ${author}\n`)
         message.channel.send(list)
-        } else {
-          const m = await message.channel.send(`These are the next songs in the list, ${message.guild.member(message.author).nickname}`)
-          message.channel.send(list)
-        }
       }
     }
     }
+
 
   } else {
 
@@ -803,11 +769,7 @@ if (order.includes("bot!")) {
       if (message.author.id == 307335427331850242) {
         message.channel.send(`Master, I'm not playing any songs in this server.`)
       } else {
-        if (message.guild.member(message.author).nickname == null) {
-        const m = await message.channel.send(`${message.author.username}, I'm not playing any songs in this server.`)
-        } else {
-          const m = await message.channel.send(`${message.guild.member(message.author).nickname}, I'm not playing any songs in this server.`)
-        }
+          const m = await message.channel.send(`${author}, I'm not playing any songs in this server.`)
       }
     } else {
       if (message.member.voice.channel) {
@@ -817,15 +779,11 @@ if (order.includes("bot!")) {
         cserver.dispatcher.end()
         }
       } else {
-      if (message.author.id == 307335427331850242) {
+       if (message.author.id == 307335427331850242) {
         message.channel.send(`Master, enter a voice channel first.`)
-      } else {
-        if (message.guild.member(message.author).nickname == null) {
-        const m = await message.channel.send(`${message.author.username}, enter a voice channel first.`)
-        } else {
-          const m = await message.channel.send(`${message.guild.member(message.author).nickname}, enter a voice channel first.`)
-        }
-      }
+       } else {
+          const m = await message.channel.send(`${author}, enter a voice channel first.`)
+       }
       }
     }
 
@@ -848,22 +806,14 @@ if (order.includes("bot!")) {
         if (message.author.id == 307335427331850242) {
           message.channel.send(`Master, enter a voice channel first.`)
         } else {
-          if (message.guild.member(message.author).nickname == null) {
-          const m = await message.channel.send(`${message.author.username}, enter a voice channel first.`)
-          } else {
-            const m = await message.channel.send(`${message.guild.member(message.author).nickname}, enter a voice channel first.`)
-          }
+            const m = await message.channel.send(`${author}, enter a voice channel first.`)
         }
       }
     } else {
         if (message.author.id == 307335427331850242) {
           message.channel.send(`Master, I'm not playing any songs in this server.`)
         } else {
-          if (message.guild.member(message.author).nickname == null) {
-          const m = await message.channel.send(`${message.author.username}, I'm not playing any songs in this server.`)
-          } else {
-            const m = await message.channel.send(`${message.guild.member(message.author).nickname}, I'm not playing any songs in this server.`)
-          }
+          const m = await message.channel.send(`${author}, I'm not playing any songs in this server.`)
         }
     }
 
@@ -881,20 +831,16 @@ if (order.includes("bot!")) {
         } else {
           hexcol = "00ffff"
         }
-        const emb = new Discord.MessageEmbed().setTitle(`Hi, I'm ${message.guild.member("307335427331850242").nickname}'s Bot.`)
+        const emb = new Discord.MessageEmbed().setTitle(`Hello, I am Bot.`)
         .setColor(hexcol)
         .addFields(
-        { name: `I'm a bot my master, ${message.guild.member("307335427331850242").nickname}, is developing to entertain themselves and learn to code.`, value: "I am glad to help my master and their friends. \n||I don't like helping strangers, though.||", inline: true},
+        { name: `I'm a bot my master, ${author}, is developing to entertain themselves and learn to code.`, value: "I am glad to help my master and their friends. \n||I don't like helping people i don't trust, though.||", inline: true},
         )
         message.delete()
         const m = message.channel.send(emb)
         } else {
-        if (message.guild.member(message.author).nickname == null) {
-        const m = await message.channel.send(`You're not my master, ${message.author.username}.`)
-        } else {
-        const m = await message.channel.send(`You're not my master, ${message.guild.member(message.author).nickname}.`)
+        const m = await message.channel.send(`You're not my master, ${author}.`)
         }
-     }
 
   } else {
 
@@ -906,21 +852,13 @@ if (order.includes("bot!")) {
          manualStatus = true
          const sub2 = sub1.replace('listening to','')
          client.user.setActivity(sub2, { type: 'LISTENING'});
-         if (message.guild.member(message.author).nickname == null) {
-           const m = await message.channel.send(`I am now listening to ${sub2}, master ${message.author.username}!`)
-         } else {
-           const m = await message.channel.send(`I am now listening to ${sub2}, master ${message.guild.member("307335427331850242").nickname}!`)
-         }
+        const m = await message.channel.send(`I am now listening to ${sub2}, master ${author}!`)
       } else {
         if (sub1.toLowerCase().includes("watching")) {
           manualStatus = true
           const sub2 = sub1.replace('watching','')
           client.user.setActivity(sub2, { type: 'WATCHING'});
-          if (message.guild.member(message.author).nickname == null) {
-            const m = await message.channel.send(`I am now watching ${sub2}, master ${message.author.username}!`)
-          } else {
-            const m = await message.channel.send(`I am now watching ${sub2}, master ${message.guild.member("307335427331850242").nickname}!`)
-          }
+          const m = await message.channel.send(`I am now watching ${sub2}, master ${author}!`)
         } else {
            if (sub1.toLowerCase().includes("automatic")) {
              manualStatus = false
@@ -929,28 +867,16 @@ if (order.includes("bot!")) {
              } else {
                 client.user.setActivity("DELTARUNE chap. 2");
              }
-             if (message.guild.member(message.author).nickname == null) {
-               const m = await message.channel.send(`My status will now automatically change every 20 minutes, master ${message.author.username}!`)
-             } else {
-               const m = await message.channel.send(`My status will now automatically change every 20 minutes, master ${message.guild.member("307335427331850242").nickname}!`)
-             }
+             const m = await message.channel.send(`My status will now automatically change every 20 minutes, master ${author}!`)
            } else {
              manualStatus = true
              client.user.setActivity(sub1);
-             if (message.guild.member(message.author).nickname == null) {
-               const m = await message.channel.send(`I am now playing ${sub1}, master ${message.author.username}!`)
-             } else {
-               const m = await message.channel.send(`I am now playing ${sub1}, master ${message.guild.member("307335427331850242").nickname}!`)
-             }
+               const m = await message.channel.send(`I am now playing ${sub1}, master ${author}`)
            }
         }
       }
     } else {
-      if (message.guild.member(message.author).nickname == null) {
-      const m = await message.channel.send(`You're not my master, ${message.author.username}.`)
-      } else {
-        const m = await message.channel.send(`You're not my master, ${message.guild.member(message.author).nickname}.`)
-      }
+      const m = await message.channel.send(`You're not my master, ${author}.`)
     }
 
   } else {
@@ -958,22 +884,10 @@ if (order.includes("bot!")) {
     if (order.includes("time")) {
      if (message.author.id == 307335427331850242) {
       checktime()
-      if (message.guild.member(message.author).nickname == null) {
-        const m = await message.channel.send(`Master ${message.author.id}, it's now ${currentTime} for me.`)
-      } else {
-        const m = await message.channel.send(`Master ${message.guild.member("307335427331850242").nickname}, it's now ${currentTime} for me.`)
-      }
+        const m = await message.channel.send(`Master ${author}, it's now ${currentTime} for me.`)
      } else {
-       if (whitelist.includes(message.author.id)) {
          checktime()
-         const m = await message.channel.send(`${message.guild.member(message.author).nickname}, it's now ${currentTime} for me.`)
-       } else {
-         if (message.guild.member(message.author).nickname == null) {
-         const m = await message.channel.send(`You're not my master, ${message.author.username}.`)
-         } else {
-           const m = await message.channel.send(`You're not my master, ${message.guild.member(message.author).nickname}.`)
-         }
-       }
+         const m = await message.channel.send(`${author}, it's now ${currentTime} for me.`)
      }
 
   } else {
@@ -1101,35 +1015,19 @@ if (order.includes("bot!")) {
        }
      }
      } else {
-          if (message.guild.member(message.author).nickname == null) {
-          const m = await message.channel.send(`You're not my master, ${message.author.username}.`)
-          } else {
-            const m = await message.channel.send(`You're not my master, ${message.guild.member(message.author).nickname}.`)
-          }
+        const m = await message.channel.send(`You're not my master, ${author}.`)
      }
 
   } else {
 
     if (order.includes("laugh")) {
      if (message.author.id == 307335427331850242) {
-       if (message.guild.member(message.author).nickname == null) {
-       const m = await message.channel.send(`Ha\nHa\nHa\n\nI'm laughing so much, master ${message.author.username}.`)
-       } else {
-         const m = await message.channel.send(`Ha\nHa\nHa\n\nI'm laughing so much, master ${message.guild.member(message.author).nickname}.`)
-       }
+         const m = await message.channel.send(`Ha\nHa\nHa\n\nI'm laughing so much, master ${author}.`)
      } else {
        if (whitelist.includes(message.author.id)) {
-         if (message.guild.member(message.author).nickname == null) {
-         const m = await message.channel.send(`Ha\nHa\nHa\n\nI'm laughing so much, ${message.author.username}.`)
-         } else {
-           const m = await message.channel.send(`Ha\nHa\nHa\n\nI'm laughing so much, ${message.guild.member(message.author).nickname}.`)
-         }
+           const m = await message.channel.send(`Ha\nHa\nHa\n\nI'm laughing so much, ${author}.`)
        } else {
-         if (message.guild.member(message.author).nickname == null) {
-         const m = await message.channel.send(`You're not my master, ${message.author.username}.`)
-         } else {
-           const m = await message.channel.send(`You're not my master, ${message.guild.member(message.author).nickname}.`)
-         }
+           const m = await message.channel.send(`You're not my master, ${author}.`)
        }
      }
 
@@ -1137,17 +1035,10 @@ if (order.includes("bot!")) {
 
   if (order.includes("revive") && order.includes("server")) {
     if (message.author.id == 307335427331850242) {
-      if (message.guild.member(message.author).nickname == null) {
-        const m = await message.channel.send(`Of course, master ${message.author.username}! \nIt's time to talk, people!`)
-      } else {
-        const m = await message.channel.send(`Of course, master ${message.guild.member("307335427331850242").nickname}! \nIt's time to talk, people!`)
-      }
+        const m = await message.channel.send(`Of course, master ${author}! \nIt's time to talk, people!`)
+
     } else {
-      if (message.guild.member(message.author).nickname == null) {
-      const m = await message.channel.send(`You're not my master, ${message.author.username}.`)
-      } else {
-        const m = await message.channel.send(`You're not my master, ${message.guild.member(message.author).nickname}.`)
-      }
+        const m = await message.channel.send(`You're not my master, ${author}.`)
     }
 
   } else {
@@ -1170,11 +1061,7 @@ if (order.includes("bot!")) {
     }
     if (message.author.id == 307335427331850242) {
       if (trust == "307335427331850242") {
-        if (message.guild.member("307335427331850242").nickname == null) {
-        const m = await message.channel.send(`I already trust you, master ${message.author.username}`)
-        } else {
-          const m = await message.channel.send(`I already trust you, master ${message.guild.member("307335427331850242").nickname}.`)
-        }
+        const m = await message.channel.send(`I already trust you, master ${author}.`)
       } else {
         if (nouser) {
           const m = await message.channel.send(`I don't recognize that user, master!`)
@@ -1204,11 +1091,7 @@ if (order.includes("bot!")) {
       }
 
     } else {
-         if (message.guild.member(message.author).nickname == null) {
-         const m = await message.channel.send(`You're not my master, ${message.author.username}.`)
-         } else {
-           const m = await message.channel.send(`You're not my master, ${message.guild.member(message.author).nickname}.`)
-         }
+       const m = await message.channel.send(`You're not my master, ${message.guild.member(message.author).nickname}.`)
     }
 
 
@@ -1232,11 +1115,7 @@ if (order.includes("bot!")) {
      }
      if (message.author.id == 307335427331850242) {
        if (block == "307335427331850242") {
-         if (message.guild.member("307335427331850242").nickname == null) {
-         const m = await message.channel.send(`I can't block you, master ${message.author.username}!`)
-         } else {
-           const m = await message.channel.send(`I can't block you, master ${message.guild.member("307335427331850242").nickname}!`)
-         }
+         const m = await message.channel.send(`I can't block you, master ${author}!`)
      } else {
        if (nouser) {
          const m = await message.channel.send(`I don't recognize that user, master!`)
@@ -1266,11 +1145,7 @@ if (order.includes("bot!")) {
       }
 
      } else {
-          if (message.guild.member(message.author).nickname == null) {
-          const m = await message.channel.send(`You're not my master, ${message.author.username}.`)
-          } else {
-            const m = await message.channel.send(`You're not my master, ${message.guild.member(message.author).nickname}.`)
-          }
+        const m = await message.channel.send(`You're not my master, ${author}.`)
      }
 
  } else {
@@ -1294,11 +1169,7 @@ if (order.includes("bot!")) {
      }
      if (message.author.id == 307335427331850242) {
        if (rest == "307335427331850242") {
-         if (message.guild.member("307335427331850242").nickname == null) {
-         const m = await message.channel.send(`I can't stop trusting you, master ${message.author.username}!`)
-         } else {
-           const m = await message.channel.send(`I can't stop trusting you, master ${message.guild.member("307335427331850242").nickname}!`)
-         }
+         const m = await message.channel.send(`I can't stop trusting you, master ${author}!`)
        } else {
          if (nouser) {
            const m = await message.channel.send(`I don't recognize that user, master!`)
@@ -1330,35 +1201,19 @@ if (order.includes("bot!")) {
        }
 
      } else {
-          if (message.guild.member(message.author).nickname == null) {
-          const m = await message.channel.send(`You're not my master, ${message.author.username}.`)
-          } else {
-            const m = await message.channel.send(`You're not my master, ${message.guild.member(message.author).nickname}.`)
-          }
+        const m = await message.channel.send(`You're not my master, ${author}.`)
      }
 
  } else {
 
    if (order.includes("hi")) {
     if (message.author.id == 307335427331850242) {
-      if (message.guild.member("307335427331850242").nickname == null) {
-        const m = await message.channel.send(`Hi, master ${message.author.username}. \nAs you are Master's friend, you're welcome. \nHow can I serve you?`)
-      } else {
-        const m = await message.channel.send(`Hi, master ${message.guild.member("307335427331850242").nickname}. How can I serve you?`)
-      }
+        const m = await message.channel.send(`Hi, master ${author}. How can I serve you?`)
     } else {
       if (whitelist.includes(message.author.id)) {
-        if (message.guild.member(message.author).nickname == null) {
-          const m = await message.channel.send(`Hi, ${message.author.username}. \nAs you are Master's friend, you're welcome. \nHow can I serve you?`)
-        } else {
-          const m = await message.channel.send(`Hi, ${message.guild.member(message.author).nickname}. \nAs you are Master's friend, you're welcome. \nHow can I serve you?`)
-        }
+        const m = await message.channel.send(`Hi, ${author}. \nAs you are Master's friend, you're welcome. \nHow can I serve you?`)
       } else {
-        if (message.guild.member(message.author).nickname == null) {
-        const m = await message.channel.send(`You're not my master, ${message.author.username}.`)
-        } else {
-          const m = await message.channel.send(`You're not my master, ${message.guild.member(message.author).nickname}.`)
-        }
+          const m = await message.channel.send(`You're not my master, ${author}.`)
       }
     }
 
@@ -1366,44 +1221,24 @@ if (order.includes("bot!")) {
 
   if (order.includes("thanks") || order.includes("thank you")) {
    if (message.author.id == 307335427331850242) {
-     if (message.guild.member("307335427331850242").nickname == null) {
-       const m = await message.channel.send(`You're welcome, master ${message.author.username}!`)
-     } else {
-       const m = await message.channel.send(`You're welcome, master ${message.guild.member("307335427331850242").nickname}!`)
-     }
+       const m = await message.channel.send(`You're welcome, master ${author}!`)
    } else {
      if (whitelist.includes(message.author.id)) {
        const m = await message.channel.send(`You're welcome, <@${message.author.id}>.`)
      } else {
-       if (message.guild.member(message.author).nickname == null) {
-       const m = await message.channel.send(`You're not my master, ${message.author.username}.`)
-       } else {
-         const m = await message.channel.send(`You're not my master, ${message.guild.member(message.author).nickname}.`)
-       }
+         const m = await message.channel.send(`You're not my master, ${author}.`)
      }
    }
 
   } else {
 
     if (message.author.id == 307335427331850242) {
-      if (message.guild.member("307335427331850242").nickname == null) {
-        const m = await message.channel.send(`I didn't quite understand your order, master ${message.author.username}.`)
-      } else {
-        const m = await message.channel.send(`I didn't quite understand your order, master ${message.guild.member("307335427331850242").nickname}.`)
-      }
+      const m = await message.channel.send(`I didn't quite understand your order, master ${author}.`)
     } else {
       if (whitelist.includes(message.author.id)) {
-        if (message.guild.member(message.author).nickname == null) {
-        const m = await message.channel.send(`I didn't quite understand your order, ${message.author.username}.`)
-        } else {
-          const m = await message.channel.send(`I didn't quite understand your order, ${message.guild.member(message.author).nickname}.`)
-        }
+          const m = await message.channel.send(`I didn't quite understand your order, ${author}.`)
       } else {
-        if (message.guild.member(message.author).nickname == null) {
-        const m = await message.channel.send(`You're not my master, ${message.author.username}.`)
-        } else {
-          const m = await message.channel.send(`You're not my master, ${message.guild.member(message.author).nickname}.`)
-        }
+          const m = await message.channel.send(`You're not my master, ${author}.`)
       }
     }
 
