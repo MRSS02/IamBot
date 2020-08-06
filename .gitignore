@@ -2,4 +2,7 @@ node_modules
 data
 downloads
 temp
-package-lock.json   
+package-lock.json
+ffmpeg.exe
+ffplay.exe
+ffprobe.exe
