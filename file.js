@@ -416,33 +416,28 @@ if (order.includes("!%d") && message.author.id == 307335427331850242 && message.
 if (message.channel.type === "dm") {
   const id = args.substring(0, 18)
   let dm = args.substring(18)
-  if (dm.includes("%%") && dm.includes("/")) {
+  if (dm.includes("%%")) {
      let hexcol
      let c
      if (message.author.id == 307335427331850242) {
        if (dm.includes("%%%")) {
-         hexcol = order.substring(order.indexOf("%%%"), order.indexOf("%%%") + 9)
+         hexcol = dm.substring(dm.indexOf("%%%"), dm.indexOf("%%%") + 9)
          const d = dm.substring(dm.indexOf("%%%"), dm.indexOf("%%%") + 9)
          c = dm.replace(d, '')
          hexcol = hexcol.substring(3)
        } else {
-         c = dm.replace("%%", '')
+         c = args.replace("%%", '')
          hexcol = "00aaff"
        }
+       if (order.includes("/")) {
        msg1 = c.substring(0, c.indexOf("/"))
        msg2 = c.replace(msg1, '')
-       msg2 = msg2.substring(1)
+       if (msg2.substring(0, 1) == " ") msg2 = msg2.substring(1)
+       } else {
+       msg1 = c
+       msg2 = "\u200b"
+       }
        const emb = new Discord.MessageEmbed()
-       .setColor(hexcol)
-       .addFields(
-       { name: "\u200b", value: msg2, inline: true},
-       )
-       const emb1 = new Discord.MessageEmbed()
-       .setColor(hexcol)
-       .addFields(
-       { name: msg1, value: "\u200b", inline: true},
-       )
-       const emb2 = new Discord.MessageEmbed()
        .setColor(hexcol)
        .addFields(
        { name: msg1, value: msg2, inline: true},
@@ -522,7 +517,7 @@ if (order.includes("ccc")) {
        if (order.includes("/")) {
        msg1 = c.substring(0, c.indexOf("/"))
        msg2 = c.replace(msg1, '')
-       msg2 = msg2.substring(1)
+       if (msg2.substring(0, 1) == " ") msg2 = msg2.substring(1)
        } else {
        msg1 = c
        msg2 = "\u200b"
@@ -867,6 +862,32 @@ if (order.includes("bot!")) {
     } else {
       const m = await message.channel.send(`You're not my master, ${author}.`)
     }
+
+  } else {
+
+    if (order.includes("be")) {
+
+      if (message.author.id == 307335427331850242) {
+        if (order.includes("online")) {
+          client.user.setStatus("online").then(message.channel.send(`I am now online, master ${author}!`))
+        } else {
+          if (order.includes("idle")) {
+            client.user.setStatus("idle").then(message.channel.send(`I am now idle, master ${author}!`))
+          } else {
+            if (order.includes("dnd") || order.includes("do not disturb") || order.includes("don't disturb")) {
+              client.user.setStatus("dnd").then(message.channel.send(`I am on do not disturb mode, master ${author}!`))
+            } else {
+              if (order.includes("invisible")) {
+                const y = await client.user.setStatus("invisible").then(message.channel.send(`I am now invisible, master ${author}!`))
+              } else {
+                const m = await message.channel.send(`Master, you didn't specify a valid status!`)
+              }
+            }
+          }
+        }
+      } else {
+        const m = await message.channel.send(`You're not my master, ${author}.`)
+      }
 
   } else {
 
@@ -1246,6 +1267,8 @@ if (order.includes("bot!")) {
 }
 }
 }
+}
+
 
 };
 };

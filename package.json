@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://gitlab.com/MRSS/my-bot.git"
+    "url": "git+https://github.com/MRSS02/IamBot.git"
   },
   "keywords": [
     "bot"
@@ -16,9 +16,9 @@
   "author": "MRSS",
   "license": "ISC",
   "bugs": {
-    "url": "https://gitlab.com/MRSS/my-bot/issues"
+    "url": "https://github.com/MRSS02/IamBot/issues"
   },
-  "homepage": "https://gitlab.com/MRSS/my-bot#readme",
+  "homepage": "https://github.com/MRSS02/IamBot",
   "dependencies": {
     "discord.js": "^12.2.0",
     "opusscript": "0.0.7",
