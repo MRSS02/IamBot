@@ -432,6 +432,7 @@ if (message.channel.type === "dm") {
        if (order.includes("/")) {
        msg1 = c.substring(0, c.indexOf("/"))
        msg2 = c.replace(msg1, '')
+       msg2 = msg2.substring(1)
        if (msg2.substring(0, 1) == " ") msg2 = msg2.substring(1)
        } else {
        msg1 = c
@@ -517,6 +518,7 @@ if (order.includes("ccc")) {
        if (order.includes("/")) {
        msg1 = c.substring(0, c.indexOf("/"))
        msg2 = c.replace(msg1, '')
+       msg2 = msg2.substring(1)
        if (msg2.substring(0, 1) == " ") msg2 = msg2.substring(1)
        } else {
        msg1 = c
@@ -654,6 +656,7 @@ if (order.includes("bot!")) {
       }
     }
     let search = link
+    let checkvalid = false
     link = link.replace(/ /g, "")
     checkvalid = ytdl.validateURL(link);
       if (!message.member.voice.channel) {
@@ -679,7 +682,7 @@ if (order.includes("bot!")) {
          }
          const l = await ytsr(search, options)
          let searchlink = Object.values(Object.values(l)[1][0])[3]
-         let checkvalid2 = ytdl.validateURL(searchlink);
+         checkvalid2 = ytdl.validateURL(searchlink);
          if (checkvalid2) {
            cserver.queue.push(searchlink)
          } else {
@@ -691,9 +694,11 @@ if (order.includes("bot!")) {
          }
         }
         if (!message.member.voice.connection) {
+          if (checkvalid || checkvalid2) {
           message.member.voice.channel.join().then(function(connection){
           play(connection, message)
           })
+          }
         }
       }
 

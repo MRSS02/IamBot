@@ -1,5 +1,5 @@
 {
-  "name": "bot",
+  "name": "I am Bot",
   "version": "1.0.0",
   "description": "I am Bot",
   "main": "file.js",
@@ -11,7 +11,7 @@
     "url": "git+https://github.com/MRSS02/IamBot.git"
   },
   "keywords": [
-    "bot"
+    "I am Bot"
   ],
   "author": "MRSS",
   "license": "ISC",
