@@ -785,11 +785,13 @@ if (order.includes("bot!")) {
 
     if (pmusic.includes(message.guild.id)) {
       if (message.member.voice.channel) {
-      message.channel.send(`Erasing the queue for this server...`)
       let cserver = queueservers[message.guild.id]
+      if (cserver.queue.length >= 0) message.channel.send(`Erasing the queue for this server...`)
       for (let x = cserver.queue.length; x >= 0; x--) {
         cserver.queue.shift()
-        cserver.dispatcher.end()
+      }
+      if (cserver.dispatcher) {
+      cserver.dispatcher.end()
       }
       pmusic2 = pmusic2.filter(sameserver)
       showsongs = showsongs.filter(sameserver)
