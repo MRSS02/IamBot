@@ -327,6 +327,10 @@ client.on("message", async message => {
 
 try {
 
+if (message.webhookID && message.content.includes("Como se sente sendo superado, <@!735574382096679052>?")) {
+ const m = await message.channel.send("Could you leave me alone, <@!159985870458322944>?");
+ return
+}
 
 if (!blacklist.includes(message.author.id)) {
 
@@ -472,12 +476,12 @@ if (order.includes(":::")) {
       message.channel.send(a)
     }
     function dm(a){
-      message.guild.member("307335427331850242").send(a)
+      if (message.channel.type === "dm") client.users.cache.get("307335427331850242").send(a); else message.guild.member("307335427331850242").send(a)
     }
     try {
      eval(ev)
     } catch (error) {
-       message.guild.member("307335427331850242").send(`${error}`)
+       if (message.channel.type === "dm") client.users.cache.get("307335427331850242").send(`${error}`); else message.guild.member("307335427331850242").send(`${error}`)
     }
 
   } else {
@@ -487,13 +491,16 @@ if (order.includes(":::")) {
 } else {
 
 if (order.includes("ccc")) {
-  const c = args.replace('ccc','')
+  let c = args.replace('ccc','')
   if (message.author.id == 307335427331850242) {
       message.delete()
+      if (c.substring(0, 1) == "!") c = c.substring(1)
       const m = message.channel.send(c)
   } else {
     if (whitelist.includes(message.author.id)) {
       message.delete()
+      if (c.substring(0, 1) == "!") c = c.substring(1)
+      if (c.substring(0,1) == " ") c = c.substring(1)
       const m = await message.channel.send(`${author} told me to say:\n"${c}."`)
     } else {
      const m = await message.channel.send(`You're not my master, ${author}.`)
@@ -630,7 +637,7 @@ if (order.includes("bot!")) {
       if (splay) {
       pmusic.push(message.guild.id)
       pmusic2.push(message.guild.id)
-      await stream.pipe(god.createWriteStream(`temp/${temp}`)).on("close", async function() {
+      const musicplay = stream.pipe(god.createWriteStream(`temp/${temp}`)).on("close", async function() {
       if (showsongs.includes(message.guild.id)) message.channel.send(`Now playing "${firstsong}"...`)
       cserver.dispatcher = con.play(god.createReadStream(`temp/${temp}`))
       cserver.queue.shift()
