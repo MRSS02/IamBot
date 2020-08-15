@@ -50,7 +50,12 @@ if (!god.existsSync("data/whitelist")){
      whitelist.push(line)
   });
 }
-
+let special
+if (!god.existsSync("data/special")){
+  god.closeSync(god.openSync("data/special", 'w'));
+} else {
+  special = god.readFileSync("data/special", 'utf8')
+}
 let queueservers = {}
 let pmusic = []
 let pmusic2 = []
@@ -87,7 +92,84 @@ let g6
 let g7
 let g8
 let g9
-let special
+let devcommands = [
+  {
+    prefix: "`:::`",
+    description: "Executes code on the run. Must be used with caution."
+  },
+  {
+    prefix: "`bot!` + `trust`",
+    description: "Adds a person to the bot whitelist, allowing that person to use more commands."
+  },
+  {
+    prefix: "`bot!` + `block`",
+    description: "Adds a person to the bot blacklist, making that person unable to use any commands for this bot."
+  },
+  {
+    prefix: "`bot!` + `reset`",
+    description: "Removes a person from either whitelist or blacklist, if applicable."
+  },
+  {
+    prefix: "`bot!` + `status`",
+    description: 'Changes the bot status message to any given one.\nIf no special flag is given, the bot will be "playing" given status.\nSpecial flags:\n`--l` - The bot will be "listening" to given status;\n`--w` - the bot will be "watching" given status\n`--a` the status will be set to automatic instead of given message'
+  },
+  {
+    prefix: "`bot!` + `be`",
+    description: 'Changes the bot status to one of the following (user must specify which one):\n`online`, `idle`, `dnd`/`do not disturb`, and `invisible`.'
+  }
+
+   ]
+let usercommands = [
+  {
+    prefix: "`!$d`",
+    description: "Auto-deletes your own message.\nCan be used alongside other commands in the same message.\nPreferably, use this command before all other commands."
+  },
+  {
+    prefix: "`ccc`",
+    description: "Auto-deletes your own message, then makes the bot replicate it.\n Only usable by whitelisted users."
+  },
+  {
+    prefix: "`%%`",
+    description: "Auto-deletes your own message, then makes the bot replicate it, in an embedded message format.\nIf no special flag is given, the message contains a description by default.\nOnly usable by whitelisted users.\nSpecial flags:\n`--t` - Adds a title to the embedded message.\n`--d` - Adds the text to the embedded message.\n`--c` - Sets the message color to given hexadecimal value, else default color will be used."
+  },
+  {
+    prefix: "`!$bye`",
+    description: "Can only be used by users with ban permissions. Bans a given user, with a nice surprise...\nSpecial flags:\n`--r` Specifies a reason for the ban. This will be visible in the auditory logs, and also sent as a DM to the user who was banned."
+  },
+  {
+    prefix: "`bot!` + `intro`",
+    description: "The bot sends out the default introduction message, in embedded format.\nSpecial flags:\n`--c` - Sets the message color to given hexadecimal value, else default color will be used."
+  },
+  {
+    prefix: "`bot!` + `play`",
+    description: "If the user is in a voice channel, the bot joins it and starts to play a specific song, or queues it if a song is already playing.\n Song can be either keyword(s) (the bot searches that on Youtube and plays the first result) or a direct youtube link."
+  },
+  {
+    prefix: "`bot!` + `queue`",
+    description: "Shows the current music queue."
+  },
+  {
+    prefix: "`bot!` + `skip`",
+    description: "If a song is playing, stops it and starts playing the next one in queue."
+  },
+  {
+    prefix: "`bot!` + `stop`",
+    description: "Stops playing any songs, clears the song queue, then disconnects."
+  },
+  {
+    prefix: "`bot!` + `time`",
+    description: "The bot tells the current time, at the timezone of the machine it's running on."
+  },
+  {
+    prefix: "`bot!` + `alarm`",
+    description: "Sets an alarm for the bot to say. Can only be used by whitelisted users.\nSpecial flags:\n`--h` - sets the hour for the alarm. Must be specified, unless delete or default message flags are in use.\n`--min` - sets the minute for the alarm; if not used, minute will be 0.\n`--dat` - sets the date for the alarm; if not used, day will be the closest possible.\n`--mon` - sets the month for the alarm; if not used, month will be the closest possible.\n`--y` - sets the year for the alarm; if not used, year will be the closest possible\n`--msg` - sets the alarm message; if not used, message will be the default one\n`--dm` - When used, the reply message sent when setting an alarm will be sent via direct message to the person who set up the alarm instead.\n`--g` - sets the default message for the alarm. Can only be used by my master.\nCan't be used with other flags at the same time.\n`--del` - Deletes a predefined alarm. Can't be used with other flags at the same time.\n"
+  },
+  {
+    prefix: "`bot!` + `hi`, `bot!` + `thanks`, `bot!` + `revive` + server`",
+    description: "Bot replies with predefined messages" 
+  }
+
+]
 
 
 //This is logged when the bot is initialized.
@@ -327,7 +409,7 @@ client.on("message", async message => {
 
 try {
 
-if (message.webhookID && message.content.includes("Como se sente sendo superado, <@!735574382096679052>?")) {
+if (message.webhookID && message.content.includes("How do you feel being surpassed by me, <@!735574382096679052>?")) {
  const m = await message.channel.send("Could you leave me alone, <@!159985870458322944>?");
  return
 }
@@ -342,7 +424,9 @@ if (!blacklist.includes(message.author.id)) {
   let author
 
 if (order.includes("!$d")) {
+  if (order.substring(order.indexOf("!$d") - 1, order.indexOf("!$d")) != "\\") {
   message.delete()
+  }
 }
 
 try {
@@ -353,6 +437,16 @@ if (message.guild.member(message.author).nickname == null) {
 }
 } catch (error) {
   author = message.author.username
+}
+
+try {
+if (message.guild.member("307335427331850242").nickname == null) {
+   owner = message.author.username
+} else {
+   owner = message.guild.member("307335427331850242").nickname
+}
+} catch (error) {
+  owner = message.author.username
 }
 
 function sameserver(id) {
@@ -371,6 +465,7 @@ function sameserver(id) {
   }
 
 if (order.includes("!%d") && message.author.id == 307335427331850242 && message.channel.type === "dm") {
+  if (order.substring(order.indexOf("!%d") - 1, order.indexOf("!%d")) != "\\") {
   let stream
   async function download(file, filename) {
     message.channel.send("Downloading...")
@@ -416,9 +511,11 @@ if (order.includes("!%d") && message.author.id == 307335427331850242 && message.
    message.channel.send(`Master, tell me the name of the output file.`)
  }
 }
+}
 
 if (message.channel.type === "dm") {
   const id = args.substring(0, 18)
+  const emb = new Discord.MessageEmbed()
   let dm = args.substring(18)
   if (dm.includes("%%")) {
      let hexcol
@@ -447,15 +544,7 @@ if (message.channel.type === "dm") {
        .addFields(
        { name: msg1, value: msg2, inline: true},
        )
-       if (msg1.substring(1) == "!" || msg1.substring(1, 2) == "!" || msg1 == "!") {
-         dm = emb
-       } else {
-         if (msg2.substring(1) == "!" || msg2 == "!") {
-            dm = emb1
-         } else {
-            dm = emb2
-         }
-       }
+       dm = emb
      }
    }
    if (message.author.id == 307335427331850242 && !isNaN(fchar)) {
@@ -470,6 +559,7 @@ if (message.channel.type === "dm") {
 }
 
 if (order.includes(":::")) {
+if (order.substring(order.indexOf(":::") - 1, order.indexOf(":::")) != "\\") {
   if (message.author.id == 307335427331850242) {
     let ev = args.substring(args.indexOf(":::") + 3)
     function say(a){
@@ -487,10 +577,11 @@ if (order.includes(":::")) {
   } else {
       const m = await message.channel.send(`You're not my master, ${author}.`)
   }
-
+}
 } else {
 
 if (order.includes("ccc")) {
+if (order.substring(order.indexOf("ccc") - 1, order.indexOf("ccc")) != "\\") {
   let c = args.replace('ccc','')
   if (message.author.id == 307335427331850242) {
       message.delete()
@@ -506,36 +597,51 @@ if (order.includes("ccc")) {
      const m = await message.channel.send(`You're not my master, ${author}.`)
     }
   }
+}
 } else {
 
  if (order.includes("%%")) {
+   if (order.substring(order.indexOf("%%") - 1, order.indexOf("%%")) != "\\") {
      let hexcol
      let c
      if (message.author.id == 307335427331850242 || whitelist.includes(message.author.id)) {
        message.delete()
-       if (order.includes("%%%")) {
-         hexcol = order.substring(order.indexOf("%%%"), order.indexOf("%%%") + 9)
-         const d = args.substring(args.indexOf("%%%"), args.indexOf("%%%") + 9)
-         c = args.replace(d, '')
-         hexcol = hexcol.substring(3)
+       const emb = new Discord.MessageEmbed()
+       c = args.replace("%%", '')
+       if (order.includes("--c")) {
+         let chkspace = c.substring(c.indexOf("--c") + 3, c.indexOf("--c") + 4)
+         let d
+         if (chkspace == " ") {
+           hexcol = c.substring(c.indexOf("--c") + 4, c.indexOf("--c") + 10)
+           d = c.substring(c.indexOf("--c"), c.indexOf("--c") + 10)
+        } else {
+          hexcol = c.substring(c.indexOf("--c") + 3, c.indexOf("--c") + 9)
+          d = c.substring(c.indexOf("--c"), c.indexOf("--c") + 9)
+        }
+        c = c.replace(d, '')
        } else {
-         c = args.replace("%%", '')
-         hexcol = "00aaff"
+         hexcol = "00ffff"
        }
-       if (order.includes("/")) {
-       msg1 = c.substring(0, c.indexOf("/"))
+       emb.setColor(hexcol)
+       if (!order.includes("--t")) {
+        if (c.includes("--d")) c = c.replace("--d", "")
+        emb.setDescription(c)
+       } else {
+       c = c.replace("--t", "")
+       if (order.includes("--d")) {
+       msg1 = c.substring(0, c.indexOf("--d"))
        msg2 = c.replace(msg1, '')
-       msg2 = msg2.substring(1)
+       msg2 = msg2.substring(3)
+       if (msg2.replace(/ /g, "") == "") msg2 = "\u200b"
        if (msg2.substring(0, 1) == " ") msg2 = msg2.substring(1)
        } else {
        msg1 = c
        msg2 = "\u200b"
        }
-       const emb = new Discord.MessageEmbed()
-       .setColor(hexcol)
-       .addFields(
+       emb.addFields(
        { name: msg1, value: msg2, inline: true},
        )
+       }
        if (message.author.id != 307335427331850242) emb.setTitle(`${author} told me to say`)
        if (message.channel.type === "dm") return
        const m = await message.channel.send(emb)
@@ -543,22 +649,25 @@ if (order.includes("ccc")) {
    } else {
        const m = await message.channel.send(`You're not my master, ${author}.`)
    }
+   }
 
 
  } else {
 
-   if (order.includes("--bye")) {
+   if (order.includes("!$bye")) {
+     if (order.substring(order.indexOf("!$bye") - 1, order.indexOf("!$bye")) != "\\") {
      if (message.member.hasPermission("BAN_MEMBERS")) {
      message.delete()
      let reasonExists
      let reason
-     if (order.includes("/")) {
+     if (order.includes("--r")) {
        reasonExists = true
-       reason = args.substring(order.indexOf("/") + 1)
+       reason = args.substring(order.indexOf("--r") + 3)
+       if (reason.substring(0, 1) == " ") reason = reason.substring(1)
      } else {
        reasonExists = false
      }
-     let a = args.substring(order.indexOf("--bye") + 5)
+     let a = args.substring(order.indexOf("!$bye") + 5)
       if (reasonExists) {
        a = a.replace(reason, "")
        a = a.replace("/", "")
@@ -614,6 +723,7 @@ if (order.includes("ccc")) {
   } else {
     const m = await message.channel.send(`You're not allowed to ask me for that, ${author}.`)
   }
+  }
 
 }
 }
@@ -621,6 +731,207 @@ if (order.includes("ccc")) {
 }
 
 if (order.includes("bot!")) {
+if (order.substring(order.indexOf("bot!") - 1, order.indexOf("bot!")) != "\\") {
+
+  if (order.includes("help")) {
+
+    let usrid = message.author.id
+    const emb = new Discord.MessageEmbed()
+    .setColor("0066ff")
+    let field0 = `Commands that only my master ${owner} can use`
+    let field1 = `Commands that multiple people can use`
+    let cmderror = false
+    let invalidflag = true
+
+    emb.addFields(
+    { name: "\u200b", value: "\u200b", inline: false},
+    )
+    if (order.includes("--f")) {
+      invalidflag = false
+      let searchitem = order.substring(order.indexOf("--f") + 3)
+      if (searchitem.includes("\\")) searchitem = searchitem.replace(/\\/g, "")
+      if (searchitem.includes(" ")) searchitem = searchitem.replace(/ /g, "")
+      if (searchitem.includes("--p")) searchitem = searchitem.replace("--p", "")
+      if (searchitem.includes("--dm")) searchitem = searchitem.replace("--dm", "")
+      function findcmd(cmdtofind) {
+        if (cmdtofind.prefix.includes(searchitem)) return cmdtofind
+      }
+      let foundcmd = devcommands.filter(findcmd)
+      if (!foundcmd[0]) foundcmd = usercommands.filter(findcmd); else foundcmd = foundcmd.concat(usercommands.filter(findcmd))
+      console.log(foundcmd)
+      if (!foundcmd[0]) cmderror = true
+      if (cmderror) {
+        emb.setTitle("I couldn't find any commands under that name.")
+      } else {
+      emb.setTitle("Command search results")
+      let cmdlist
+      for (let x = 0; x < foundcmd.length; x++) {
+        let addlist = `${foundcmd[x].prefix}\n`
+        if (!order.includes("--p")) addlist += `${foundcmd[x].description}\n\n`; else addlist += `\n`
+        let totlen
+        if (cmdlist) {
+          totlen = addlist.length + cmdlist.length
+          if (totlen <= 1024) {
+            cmdlist += addlist;
+          } else {
+            emb.addFields(
+            { name: "\u200b", value: cmdlist, inline: false},
+            )
+            cmdlist = addlist
+          }
+        } else {
+          cmdlist = addlist
+        }
+      }
+      emb.addFields(
+      { name: "\u200b", value: cmdlist, inline: false},
+      )
+      }
+    } else {
+    emb.setTitle("List of commands understood by me")
+    if (!order.includes("--u") && !order.includes("--d")) {
+      invalidflag = false
+      let fieldS = "Special character"
+      let fieldSV = "`\\`\n"
+      if (!order.includes("--p")) fieldSV +="If this character precedes a command prefix (not considering flags), the command is ignored.\n"
+      emb.addFields(
+      { name: fieldS, value: fieldSV, inline: false},
+      );
+    }
+    if (!order.includes("--u") && !order.includes("--s")) {
+      invalidflag = false
+      let cmdlist
+      let already = false
+      for (let x = 0; x < devcommands.length; x++) {
+        let addlist = `${devcommands[x].prefix}\n`
+        if (!order.includes("--p")) addlist += `${devcommands[x].description}\n\n`; else addlist += `\n`
+        let totlen
+        if (cmdlist) {
+          totlen = addlist.length + cmdlist.length
+          if (totlen <= 1024) {
+            cmdlist += addlist;
+          } else {
+            if (already) {
+            emb.addFields(
+            { name: "\u200b", value: cmdlist, inline: false},
+            )
+            } else {
+              emb.addFields(
+              { name: field0, value: cmdlist, inline: false},
+              )
+            }
+            already = true
+            cmdlist = addlist
+          }
+        } else {
+          cmdlist = addlist
+        }
+      }
+      if (already) {
+      emb.addFields(
+      { name: "\u200b", value: cmdlist, inline: false},
+      )
+      } else {
+        emb.addFields(
+        { name: field0, value: cmdlist, inline: false},
+        )
+      }
+      already = true
+    }
+
+    if (!order.includes("--d") && !order.includes("--s")) {
+    invalidflag = false
+    let cmdlist
+    let already = false
+    for (let x = 0; x < usercommands.length; x++) {
+      let addlist = `${usercommands[x].prefix}\n`
+      if (!order.includes("--p")) addlist += `${usercommands[x].description}\n\n`; else addlist += `\n`
+      let totlen
+      if (cmdlist) {
+        totlen = addlist.length + cmdlist.length
+        if (totlen <= 1024) {
+          cmdlist += addlist;
+        } else {
+          if (already) {
+          emb.addFields(
+          { name: "\u200b", value: cmdlist, inline: false},
+          )
+          } else {
+            emb.addFields(
+            { name: field1, value: cmdlist, inline: false},
+            )
+          }
+          already = true
+          cmdlist = addlist
+        }
+      } else {
+        cmdlist = addlist
+      }
+    }
+    if (already) {
+    emb.addFields(
+    { name: "\u200b", value: cmdlist, inline: false},
+    )
+    } else {
+      emb.addFields(
+      { name: field1, value: cmdlist, inline: false},
+      )
+    }
+    already = true
+    }
+    }
+    if (cmderror) {
+      if (message.author.id == 307335427331850242) {
+        if (order.includes("--dm")) {
+          const m = client.users.cache.get(`${usrid}`).send("Master, I couldn't find that command.")
+        } else {
+          const m = message.channel.send("Master, I couldn't find that command.")
+        }
+      } else {
+        if (order.includes("--dm")) {
+          const m =client.users.cache.get(`${usrid}`).send(`${author}, I couldn't find that command.`)
+        } else {
+          const m = message.channel.send(`${author}, I couldn't find that command.`)
+        }
+      }
+    } else {
+    if (message.author.id == 307335427331850242) {
+      if (invalidflag) {
+        if (order.includes("--dm")) {
+          const m = client.users.cache.get(`${usrid}`).send("Master, this is an invalid combination of flags.")
+        } else {
+          const m = message.channel.send("Master, this is an invalid combination of flags.")
+        }
+      } else {
+      if (order.includes("--dm")) {
+        client.users.cache.get(`${usrid}`).send("Dear master, I'm glad to help you:")
+        const m = client.users.cache.get(`${usrid}`).send(emb)
+      } else {
+        message.channel.send("Dear master, I'm glad to help you:")
+        const m = message.channel.send(emb)
+      }
+      }
+    } else {
+      if (invalidflag) {
+        if (order.includes("--dm")) {
+          const m = client.users.cache.get(`${usrid}`).send(`${author}, this is an invalid combination of flags.`)
+        } else {
+          const m = message.channel.send(`${author}, this is an invalid combination of flags.`)
+        }
+      } else {
+      if (order.includes("--dm")) {
+        client.users.cache.get(`${usrid}`).send(`${author}, I'm glad to help you:`)
+        const m = client.users.cache.get(`${usrid}`).send(emb)
+      } else {
+        message.channel.send(`${author}, I'm glad to help you:`)
+        const m = message.channel.send(emb)
+      }
+      }
+    }
+    }
+
+
+  } else {
 
   if (order.includes("play")) {
     let cserver
@@ -825,40 +1136,44 @@ if (order.includes("bot!")) {
   if (order.includes("intro")) {
 
       let hexcol
-      let c
-        if (order.includes("%%%")) {
-          hexcol = order.substring(order.indexOf("%%%"), order.indexOf("%%%") + 9)
-          hexcol = hexcol.substring(3)
-        } else {
-          hexcol = "00ffff"
-        }
+      let c = args
+      if (order.includes("--c")) {
+        let chkspace = c.substring(c.indexOf("--c") + 3, c.indexOf("--c") + 4)
+        if (chkspace == " ") {
+          hexcol = c.substring(c.indexOf("--c") + 4, c.indexOf("--c") + 10)
+       } else {
+         hexcol = c.substring(c.indexOf("--c") + 3, c.indexOf("--c") + 9)
+       }
+      } else {
+        hexcol = "0066ff"
+      }
         const emb = new Discord.MessageEmbed().setTitle(`Hello, I am Bot.`)
         .setColor(hexcol)
         .addFields(
-        { name: `I'm a bot my master, ${author}, is developing to entertain themselves and learn to code.`, value: "I am glad to help my master and their friends. \n||I don't like helping people i don't trust, though.||", inline: true},
+        { name: `I'm a bot my master, ${author}, is developing to entertain themselves and learn to code.`, value: `\n*(to know about the commands I understand, say "bot! help")*\n\nI am glad to help my master and their friends.\n||I don't like helping people i don't trust, though.||`, inline: true},
         )
         const m = message.channel.send(emb)
 
 
   } else {
 
-  if (order.includes("change status to ")) {
+  if (order.includes("status")) {
 
     if (message.author.id == 307335427331850242) {
-      const sub1 = args.substring(order.indexOf("change status to") + 17)
-      if (sub1.toLowerCase().includes("listening to")) {
+      const sub1 = args.substring(order.indexOf("status") + 3)
+      if (sub1.toLowerCase().includes("--l")) {
          manualStatus = true
-         const sub2 = sub1.replace('listening to','')
+         const sub2 = sub1.replace('--l','')
          client.user.setActivity(sub2, { type: 'LISTENING'});
         const m = await message.channel.send(`I am now listening to ${sub2}, master ${author}!`)
       } else {
-        if (sub1.toLowerCase().includes("watching")) {
+        if (sub1.toLowerCase().includes("--w")) {
           manualStatus = true
-          const sub2 = sub1.replace('watching','')
+          const sub2 = sub1.replace('--w','')
           client.user.setActivity(sub2, { type: 'WATCHING'});
           const m = await message.channel.send(`I am now watching ${sub2}, master ${author}!`)
         } else {
-           if (sub1.toLowerCase().includes("automatic")) {
+           if (sub1.toLowerCase().includes("--a")) {
              manualStatus = false
              if (statusBot) {
                 client.user.setActivity("Meleeeee!");
@@ -917,48 +1232,97 @@ if (order.includes("bot!")) {
   } else {
 
     if (order.includes("alarm")) {
-      if (message.author.id == 307335427331850242) {
-       if (order.includes("erase") || order.includes("delete")) {
+      if (order.includes("--g")) {
+        if (message.author.id == 307335427331850242) {
+         special = args.substring(args.indexOf("--g") + 3)
+         if (special.substring(0, 1) == " ") special = special.substring(1)
+         god.writeFile("data/special", special, function (error) {})
+         const m = await message.channel.send(`I've set the default alarm message to "${special}", master.`)
+        } else {
+          if (whitelist.includes(message.author.id)) {
+            const m = await message.channel.send(`Only my master has permission to use this flag, ${author}.`)
+          } else {
+            const m = await message.channel.send(`You're not my master, ${author}.`)
+          }
+        }
+      } else {
+      if (message.author.id == 307335427331850242 || whitelist.includes(message.author.id)) {
+       if (order.includes("--del")) {
          if (alarm) {
          alarm = false
-         message.channel.send("I erased the previously set alarm, master.")
+         if (message.author.id == 307335427331850242) {
+         const m = await message.channel.send("I erased the previously set alarm, master.")
          } else {
-          message.channel.send("There is no predefined alarm, master")
+           const m = await message.channel.send(`I erased the previously set alarm, ${author}`)
+         }
+         } else {
+           if (message.author.id == 307335427331850242) {
+             const m = await message.channel.send("There is no predefined alarm, master")
+           } else {
+             const m = await message.channel.send(`There is no predefined alarm, ${author}`)
+           }
          }
        } else {
         if (alarm) {
           const m = await message.channel.send(`An alarm is already set, master.`)
         } else {
-         if (order.includes("/hour/")) {
-           thour = parseInt(order.substring(order.indexOf("/hour/") + 6, order.indexOf("/hour/") + 8), 10)
+         if (order.includes("--h")) {
+           if (order.substring(order.indexOf("--h") + 3, order.substring(order.indexOf("--h") + 4) == " ")) {
+             thour = parseInt(order.substring(order.indexOf("--h") + 4, order.indexOf("--h") + 6), 10)
+           } else {
+             thour = parseInt(order.substring(order.indexOf("--h") + 3, order.indexOf("--h") + 5), 10)
+           }
+           if (isNaN(thour)) {
+             if (message.author.id == 307335427331850242) {
+                 const m = await message.channel.send(`The hour you told me to say the alarm is invalid, master.`)
+             } else {
+                const m = await message.channel.send(`The hour you told me to say the alarm is invalid, ${author}.`)
+             }
+             return
+           }
            while (thour > 23) {
              thour -= 24
            }
-           if (order.includes("/message/")) {
-             timeOutMessage = order.substring(order.indexOf("/message/") + 9)
+           if (order.includes("--msg")) {
+             timeOutMessage = order.substring(order.indexOf("--msg") + 5)
            } else {
-             if (special == undefined) {
-             timeOutMessage = "Alarm"
-             } else {
-             timeOutMessage = special
-             }
+              if (!special) {
+               timeOutMessage = "Alarm"
+              } else {
+               timeOutMessage = special
+              }
            }
-           if (order.includes("/minute/")) {
-             tmin = parseInt(order.substring(order.indexOf("/minute/") + 8, order.indexOf("/minute/") + 10), 10)
+           if (order.includes("--min")) {
+             if (order.substring(order.indexOf("--min") + 5, order.substring(order.indexOf("--min") + 6) == " ")) {
+               tmin = parseInt(order.substring(order.indexOf("--min") + 6, order.indexOf("--min") + 8), 10)
+             } else {
+               tmin = parseInt(order.substring(order.indexOf("--min") + 5, order.indexOf("--min") + 7), 10)
+             }
+             if (isNaN(tmin)) tmin = 0
              while (tmin > 59) {
                tmin -= 60
              }
            } else {
              tmin = 0
            }
-           if (order.includes("/year/")) {
-             tyear = parseInt(order.substring(order.indexOf("/year/") + 6, order.indexOf("/year/") + 8), 10)
-             if (tyear < ana) tyear = ana
+           if (order.includes("--y")) {
+             if (order.substring(order.indexOf("--y") + 3, order.substring(order.indexOf("--y") + 4) == " ")) {
+               tyear = parseInt(order.substring(order.indexOf("--y") + 4, order.indexOf("--y") + 8), 10)
+             } else {
+               year = parseInt(order.substring(order.indexOf("--y") + 3, order.indexOf("--y") + 7), 10)
+             }
+             if (isNaN(tyear)) tyear = ana
+             if (tyear < ana) tyear = ana; else tyear = ana
            } else {
-             tyear = ana
+             if (tyear < ana) tyear = ana; else tyear = ana
            }
-           if (order.includes("/month/")) {
-             tmonth = parseInt(order.substring(order.indexOf("/month/") + 7, order.indexOf("/month/") + 9), 10)
+           if (order.includes("--mon")) {
+             if (order.substring(order.indexOf("--mon") + 5, order.substring(order.indexOf("--mon") + 6) == " ")) {
+             tmonth = parseInt(order.substring(order.indexOf("--mon") + 6, order.indexOf("--mon") + 8), 10)
+             } else {
+             tmonth = parseInt(order.substring(order.indexOf("--mon") + 5, order.indexOf("--mon") + 7), 10)
+             }
+             if (isNaN(tmonth)) tmonth = v24
              while (tmonth > 12) {
                tmonth -= 12
              }
@@ -966,32 +1330,70 @@ if (order.includes("bot!")) {
            } else {
              tmonth = v24
            }
-           if (order.includes("/date/")) {
-             tdate = parseInt(order.substring(order.indexOf("/date/") + 6, order.indexOf("/date/") + 8), 10)
-             if (tmonth == 1 || tmonth == 3 || tmonth == 5 || tmonth == 7 || tmonth == 8 || tmonth == 10 || tmonth == 12) {
-               while (tdate > 31) {
-                 tdate -= 31
-               }
+           if (order.includes("--dat")) {
+             if (order.substring(order.indexOf("--dat") + 5, order.substring(order.indexOf("--dat") + 7) == " ")) {
+               tdate = parseInt(order.substring(order.indexOf("--dat") + 6, order.indexOf("--dat") + 8), 10)
              } else {
-                if (tmonth == 2 && bi6to) {
-                  while (tdate > 29) {
-                    tdate -= 29
-                  }
-                } else {
-                  if (tmonth == 2) {
-                    while (tdate > 28) {
-                      tdate -= 28
+              tdate = parseInt(order.substring(order.indexOf("--dat") + 5, order.indexOf("--dat") + 7), 10)
+             }
+             if (!isNaN(tdate)) {
+               if (tmonth == 1 || tmonth == 3 || tmonth == 5 || tmonth == 7 || tmonth == 8 || tmonth == 10 || tmonth == 12) {
+                 while (tdate > 31) {
+                   tdate -= 31
+                 }
+               } else {
+                  if (tmonth == 2 && bi6to) {
+                    while (tdate > 29) {
+                      tdate -= 29
                     }
                   } else {
-                    while (tdate > 30) {
-                      tdate -= 30
+                    if (tmonth == 2) {
+                      while (tdate > 28) {
+                        tdate -= 28
+                      }
+                    } else {
+                      while (tdate > 30) {
+                        tdate -= 30
+                      }
                     }
                   }
-                }
+               }
+             } else {
+               tdate = v23
+               if (thour < v17 || thour == v17 && tmin <= v18) {
+                 if (tmonth == 1 || tmonth == 3 || tmonth == 5 || tmonth == 7 || tmonth == 8 || tmonth == 10 || tmonth == 12) {
+                   if (tdate == 31) {
+                     if (tmonth == 12) {
+                       tyear += 1
+                       tmonth = 1
+                     } else {
+                       tmonth += 1
+                     }
+                     tdate = 1
+                    } else {
+                      tdate += 1
+                    }
+                 } else {
+                     if (tmonth == 2) {
+                       if (bi6to && tdate == 29 || !bi6to && tdate == 28) {
+                         tmonth += 1
+                         tdate = 1
+                        }
+                     } else {
+                       if (tdate == 30) {
+                         tmonth += 1
+                         tdate = 1
+                        } else {
+                          tdate += 1
+                        }
+                     }
+                 }
+               }
              }
            } else {
              tdate = v23
              if (thour < v17 || thour == v17 && tmin <= v18) {
+               console.log("ok")
                if (tmonth == 1 || tmonth == 3 || tmonth == 5 || tmonth == 7 || tmonth == 8 || tmonth == 10 || tmonth == 12) {
                  if (tdate == 31) {
                    if (tmonth == 12) {
@@ -1001,17 +1403,23 @@ if (order.includes("bot!")) {
                      tmonth += 1
                    }
                    tdate = 1
-                  }
+                 } else {
+                   tdate += 1
+                 }
                } else {
                    if (tmonth == 2) {
                      if (bi6to && tdate == 29 || !bi6to && tdate == 28) {
                        tmonth += 1
                        tdate = 1
+                      } else {
+                        tdate += 1
                       }
                    } else {
                      if (tdate == 30) {
                        tmonth += 1
                        tdate = 1
+                      } else {
+                        tdate += 1
                       }
                    }
                }
@@ -1021,25 +1429,46 @@ if (order.includes("bot!")) {
            console.log(amessage)
            alarm = true
            if (tmin < 10) {
-             if (order.includes("--dm")) {
-                message.guild.member("307335427331850242").send(`I will say "${timeOutMessage}" at ${tmonth}/${tdate}/${tyear}, ${thour}:0${tmin}, in the channel ${amessage}; master.`)
-              } else {
-             const m = await message.channel.send(`I will say "${timeOutMessage}" at ${tmonth}/${tdate}/${tyear}, ${thour}:0${tmin}, in the channel ${amessage}; master.`)
+             if (message.author.id == 307335427331850242) {
+               if (order.includes("--dm")) {
+                  message.guild.member("307335427331850242").send(`I will say "${timeOutMessage}" at ${tmonth}/${tdate}/${tyear}, ${thour}:0${tmin}, in the channel ${amessage} of the server "${message.guild}"; master.`)
+                } else {
+               const m = await message.channel.send(`I will say "${timeOutMessage}" at ${tmonth}/${tdate}/${tyear}, ${thour}:0${tmin}, in the channel ${amessage} of the server "${message.guild}"; master.`)
+               }
+             } else {
+               if (order.includes("--dm")) {
+                  message.guild.member(message.author.id).send(`I will say "${timeOutMessage}" at ${tmonth}/${tdate}/${tyear}, ${thour}:0${tmin}, in the channel ${amessage} of the server "${message.guild}"; ${author}.`)
+                } else {
+               const m = await message.channel.send(`I will say "${timeOutMessage}" at ${tmonth}/${tdate}/${tyear}, ${thour}:0${tmin}, in the channel ${amessage} of the server "${message.guild}""; ${author}.`)
+               }
              }
            } else {
-             if (order.includes("--dm")) {
-                message.guild.member("307335427331850242").send(`I will say "${timeOutMessage}" at ${tmonth}/${tdate}/${tyear}, ${thour}:${tmin}, in the channel ${amessage}; master.`)
-              } else {
-             const m = await message.channel.send(`I will say "${timeOutMessage}" at ${tmonth}/${tdate}/${tyear}, ${thour}:${tmin}, in the channel ${amessage}; master.`)
+             if (message.author.id == 307335427331850242) {
+               if (order.includes("--dm")) {
+                  message.guild.member("307335427331850242").send(`I will say "${timeOutMessage}" at ${tmonth}/${tdate}/${tyear}, ${thour}:${tmin}, in the channel ${amessage} of the server ${message.guild}; master.`)
+               } else {
+                  const m = await message.channel.send(`I will say "${timeOutMessage}" at ${tmonth}/${tdate}/${tyear}, ${thour}:${tmin}, in the channel ${amessage} of the server ${message.guild}; master.`)
+               }
+             } else {
+               if (order.includes("--dm")) {
+                  message.guild.member("307335427331850242").send(`I will say "${timeOutMessage}" at ${tmonth}/${tdate}/${tyear}, ${thour}:${tmin}, in the channel ${amessage} of the server ${message.guild}; ${author}.`)
+                } else {
+               const m = await message.channel.send(`I will say "${timeOutMessage}" at ${tmonth}/${tdate}/${tyear}, ${thour}:${tmin}, in the channel ${amessage} of the server ${message.guild}; ${author}.`)
+               }
              }
            }
          } else {
-            const m = await message.channel.send(`You didn't tell me the time when i should say the alarm, master.`)
+           if (message.author.id == 307335427331850242) {
+            const m = await message.channel.send(`You didn't tell me the hour when i should say the alarm, master.`)
+          } else {
+            const m = await message.channel.send(`You didn't tell me the hour when i should say the alarm, ${author}.`)
+          }
          }
        }
      }
      } else {
         const m = await message.channel.send(`You're not my master, ${author}.`)
+     }
      }
 
   } else {
@@ -1266,7 +1695,8 @@ if (order.includes("bot!")) {
       }
     }
 
-
+}
+}
 }
 }
 }
