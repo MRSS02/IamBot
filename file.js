@@ -56,6 +56,66 @@ if (!god.existsSync("data/special")){
 } else {
   special = god.readFileSync("data/special", 'utf8')
 }
+let plist = {
+  "queue0": { queue: [] },
+  "queue1": { queue: [] },
+  "queue2": { queue: [] },
+  "queue3": { queue: [] },
+  "queue4": { queue: [] },
+}
+let playingpriv = false
+let privqueue = 0
+if (!god.existsSync("data/plist0")){
+  god.closeSync(god.openSync("data/plist0", 'w'));
+} else {
+  readline.createInterface({
+      input: god.createReadStream("data/plist0"),
+      terminal: false
+  }).on('line', function(line) {
+     plist.queue0.queue.push(line)
+  });
+}
+if (!god.existsSync("data/plist1")){
+  god.closeSync(god.openSync("data/plist1", 'w'));
+} else {
+  readline.createInterface({
+      input: god.createReadStream("data/plist1"),
+      terminal: false
+  }).on('line', function(line) {
+     plist.queue1.queue.push(line)
+  });
+}
+if (!god.existsSync("data/plist2")){
+  god.closeSync(god.openSync("data/plist2", 'w'));
+} else {
+  readline.createInterface({
+      input: god.createReadStream("data/plist2"),
+      terminal: false
+  }).on('line', function(line) {
+     plist.queue2.queue.push(line)
+  });
+}
+if (!god.existsSync("data/plist3")){
+  god.closeSync(god.openSync("data/plist3", 'w'));
+} else {
+  readline.createInterface({
+      input: god.createReadStream("data/plist3"),
+      terminal: false
+  }).on('line', function(line) {
+     plist.queue3.queue.push(line)
+  });
+}
+if (!god.existsSync("data/plist4")){
+  god.closeSync(god.openSync("data/plist4", 'w'));
+} else {
+  readline.createInterface({
+      input: god.createReadStream("data/plist4"),
+      terminal: false
+  }).on('line', function(line) {
+     plist.queue4.queue.push(line)
+  });
+}
+let cserverp
 let queueservers = {}
 let pmusic = []
 let pmusic2 = []
@@ -99,15 +159,15 @@ let devcommands = [
   },
   {
     prefix: "`bot!` + `trust`",
-    description: "Adds a person to the bot whitelist, allowing that person to use more commands."
+    description: "Adds a person to the bot trusted list, allowing that person to use more commands."
   },
   {
     prefix: "`bot!` + `block`",
-    description: "Adds a person to the bot blacklist, making that person unable to use any commands for this bot."
+    description: "Adds a person to the bot block list, making that person unable to use any commands for this bot."
   },
   {
     prefix: "`bot!` + `reset`",
-    description: "Removes a person from either whitelist or blacklist, if applicable."
+    description: "Removes a person from either trusted or blocked, if applicable."
   },
   {
     prefix: "`bot!` + `status`",
@@ -166,7 +226,7 @@ let usercommands = [
   },
   {
     prefix: "`bot!` + `hi`, `bot!` + `thanks`, `bot!` + `revive` + server`",
-    description: "Bot replies with predefined messages" 
+    description: "Bot replies with predefined messages"
   }
 
 ]
@@ -420,7 +480,8 @@ if (!blacklist.includes(message.author.id)) {
   const args = message.content
   const order = args.toLowerCase();
   const fchar = parseInt(args.substring(0, 18), 10)
-  let link = args.substring(order.indexOf("play") + 4)
+  let play
+  if (order.includes("play")) link = args.substring(order.indexOf("play") + 4)
   let author
 
 if (order.includes("!$d")) {
@@ -441,12 +502,12 @@ if (message.guild.member(message.author).nickname == null) {
 
 try {
 if (message.guild.member("307335427331850242").nickname == null) {
-   owner = message.author.username
+   owner = message.guild.member("307335427331850242").username
 } else {
    owner = message.guild.member("307335427331850242").nickname
 }
 } catch (error) {
-  owner = message.author.username
+  owner = message.guild.member("307335427331850242").username
 }
 
 function sameserver(id) {
@@ -670,7 +731,7 @@ if (order.substring(order.indexOf("ccc") - 1, order.indexOf("ccc")) != "\\") {
      let a = args.substring(order.indexOf("!$bye") + 5)
       if (reasonExists) {
        a = a.replace(reason, "")
-       a = a.replace("/", "")
+       a = a.replace("--r", "")
      }
       a = a.replace("<@!", "")
       a = a.replace(">", "")
@@ -976,7 +1037,65 @@ if (order.substring(order.indexOf("bot!") - 1, order.indexOf("bot!")) != "\\") {
     let search = link
     let checkvalid = false
     link = link.replace(/ /g, "")
-    checkvalid = ytdl.validateURL(link);
+    let plink
+    if (!order.includes("--h")) showsongs.push(message.guild.id)
+    if (order.includes("--p")) {
+      plink = order.substring(order.indexOf("--p") + 3)
+      if (message.author.id == 307335427331850242) {
+      if (parseInt(plink.substring(0, 1), 10) < 5) {
+      async function playp(con, mes) {
+        let info = await ytdl.getInfo(cserverp.queue[0])
+        let firstsong = info.title
+        stream = ytdl(cserverp.queue[0], { quality:"highestaudio", filter: "audioonly"})
+        pmusic.push(message.guild.id)
+        pmusic2.push(message.guild.id)
+        const musicplay = stream.pipe(god.createWriteStream(`temp/${temp}`)).on("close", async function() {
+        if (showsongs.includes(message.guild.id)) message.channel.send(`Now playing "${firstsong}"...`)
+        cserverp.dispatcher = con.play(god.createReadStream(`temp/${temp}`))
+        cserverp.queue.shift()
+        cserverp.dispatcher.on("finish", function(){
+          pmusic = pmusic.filter(sameserver)
+          pmusic2 = pmusic2.filter(sameserver)
+          if(cserverp.queue[0]){
+            playp(con, mes)
+          } else {
+            playingpriv = false
+            privqueue = 0
+            message.channel.send(`No songs left to play, now disconecting...`)
+            con.disconnect()
+          }
+        })
+        })
+      }
+      if (!playingpriv) {
+        privqueue = `queue${plink}`
+        if (plist[privqueue].queue[0]) cserverp = JSON.parse(JSON.stringify(plist[privqueue])); else return message.channel.send("Master, this playlist is empty.")
+        playingpriv = true
+      } else {
+        return message.channel.send(`Master, I'm already playing songs on this server...`)
+      }
+      if (!message.member.voice.channel) {
+        return message.channel.send(`Master, enter a voice channel first.`)
+      } else {
+        message.member.voice.channel.join().then(function(connection){
+        playp(connection, message)
+        })
+      }
+      } else {
+        message.channel.send(`Master, this is not a valid predefined playlist.`)
+      }
+      } else {
+        message.channel.send(`Only my master has permission to use this flag, ${author}.`)
+      }
+    } else {
+      if (playingpriv) {
+        if (message.author.id == 307335427331850242) {
+          message.channel.send(`Master, I'm already playing your personal playlist.`)
+        } else {
+            const m = await message.channel.send(`${author}, you can't add songs to this playlist.`)
+        }
+      } else {
+      checkvalid = ytdl.validateURL(link);
       if (!message.member.voice.channel) {
         if (message.author.id == 307335427331850242) {
           message.channel.send(`Master, enter a voice channel first.`)
@@ -989,7 +1108,6 @@ if (order.substring(order.indexOf("bot!") - 1, order.indexOf("bot!")) != "\\") {
           queue: []
           }
         }
-        if (!order.includes("--hide")) showsongs.push(message.guild.id)
         cserver = queueservers[message.guild.id]
         if (checkvalid) {
          cserver.queue.push(link)
@@ -1019,6 +1137,8 @@ if (order.substring(order.indexOf("bot!") - 1, order.indexOf("bot!")) != "\\") {
           }
         }
       }
+      }
+    }
 
 
   } else {
@@ -1032,40 +1152,72 @@ if (order.substring(order.indexOf("bot!") - 1, order.indexOf("bot!")) != "\\") {
         const m = await message.channel.send(`${author}, I'm not playing any songs in this server.`)
     }
     } else {
-    let cserver = queueservers[message.guild.id]
-    let queuenames = []
-    for (let x = 0; x < cserver.queue.length; x++) {
-      let info = await ytdl.getInfo(cserver.queue[x])
-      let namesong = info.title
-      queuenames.push(namesong)
-    }
-    if (`${queuenames}` == "") {
-      const list = new Discord.MessageEmbed().setTitle(`${message.guild}'s queue is empty.`)
-      .setColor("0066ff")
-      .addFields(
-      { name: "\u200b", value: "\u200b", inline: true},
-      )
-      if (message.author.id == 307335427331850242) {
-        message.channel.send(`These are the next songs in the list, master:\n`)
-        message.channel.send(list)
-      } else {
-        const m = await message.channel.send(`These are the next songs in the list, ${author}\n`)
-        message.channel.send(list)
-      }
-    } else {
-      const list = new Discord.MessageEmbed().setTitle(`${message.guild}'s queue`)
-      .setColor("0066ff")
-      .addFields(
-      { name: "\u200b", value: queuenames, inline: true},
-      )
-      if (message.author.id == 307335427331850242) {
-        message.channel.send(`These are the next songs in the list, master:\n`)
-        message.channel.send(list)
-      } else {
-        const m = await message.channel.send(`These are the next songs in the list, ${author}\n`)
-        message.channel.send(list)
-      }
-    }
+     if (playingpriv && message.author.id == 307335427331850242) {
+       let cserver = cserverp
+       let queuenames = []
+       for (let x = 0; x < cserver.queue.length; x++) {
+         let info = await ytdl.getInfo(cserver.queue[x])
+         let namesong = info.title
+         queuenames.push(namesong)
+       }
+       if (`${queuenames}` == "") {
+         const list = new Discord.MessageEmbed().setTitle(`Master, your personal queue is empty.`)
+         .setColor("0066ff")
+         .addFields(
+         { name: "\u200b", value: "\u200b", inline: true},
+         )
+           message.channel.send(`These are the next songs in the list, master:\n`)
+           const m = await message.channel.send(list)
+       } else {
+         const list = new Discord.MessageEmbed().setTitle(`${message.guild}'s queue`)
+         .setColor("0066ff")
+         .addFields(
+         { name: "\u200b", value: queuenames, inline: true},
+         )
+         if (message.author.id == 307335427331850242) {
+           message.channel.send(`These are the next songs in the list, master:\n`)
+           message.channel.send(list)
+         } else {
+           const m = await message.channel.send(`These are the next songs in the list, ${author}\n`)
+           message.channel.send(list)
+         }
+       }
+     } else {
+       let cserver = queueservers[message.guild.id]
+       let queuenames = []
+       for (let x = 0; x < cserver.queue.length; x++) {
+         let info = await ytdl.getInfo(cserver.queue[x])
+         let namesong = info.title
+         queuenames.push(namesong)
+       }
+       if (`${queuenames}` == "") {
+         const list = new Discord.MessageEmbed().setTitle(`${message.guild}'s queue is empty.`)
+         .setColor("0066ff")
+         .addFields(
+         { name: "\u200b", value: "\u200b", inline: true},
+         )
+         if (message.author.id == 307335427331850242) {
+           message.channel.send(`These are the next songs in the list, master:\n`)
+           message.channel.send(list)
+         } else {
+           const m = await message.channel.send(`These are the next songs in the list, ${author}\n`)
+           message.channel.send(list)
+         }
+       } else {
+         const list = new Discord.MessageEmbed().setTitle(`${message.guild}'s queue`)
+         .setColor("0066ff")
+         .addFields(
+         { name: "\u200b", value: queuenames, inline: true},
+         )
+         if (message.author.id == 307335427331850242) {
+           message.channel.send(`These are the next songs in the list, master:\n`)
+           const m = await message.channel.send(list)
+         } else {
+           message.channel.send(`These are the next songs in the list, ${author}\n`)
+           const m = await message.channel.send(list)
+         }
+       }
+     }
     }
 
 
@@ -1073,6 +1225,7 @@ if (order.substring(order.indexOf("bot!") - 1, order.indexOf("bot!")) != "\\") {
 
   if (order.includes("skip")) {
 
+    let cserver
     let notplaying
     if (pmusic.includes(message.guild.id)) notplaying = false; else notplaying = true;
     if (notplaying) {
@@ -1083,7 +1236,11 @@ if (order.substring(order.indexOf("bot!") - 1, order.indexOf("bot!")) != "\\") {
       }
     } else {
       if (message.member.voice.channel) {
-      let cserver = queueservers[message.guild.id]
+      if (playingpriv && message.author.id == 307335427331850242) {
+        cserver = cserverp
+      } else {
+        cserver = queueservers[message.guild.id]
+      }
       pmusic = pmusic.filter(sameserver)
         if (cserver.dispatcher) {
         cserver.dispatcher.end()
@@ -1101,19 +1258,26 @@ if (order.substring(order.indexOf("bot!") - 1, order.indexOf("bot!")) != "\\") {
 
     if (order.includes("stop")) {
 
+    let cserver
+
     if (pmusic.includes(message.guild.id)) {
       if (message.member.voice.channel) {
-      let cserver = queueservers[message.guild.id]
-      if (cserver.queue.length >= 0) message.channel.send(`Erasing the queue for this server...`)
-      for (let x = cserver.queue.length; x >= 0; x--) {
-        cserver.queue.shift()
-      }
-      if (cserver.dispatcher) {
-      cserver.dispatcher.end()
-      }
-      pmusic2 = pmusic2.filter(sameserver)
-      showsongs = showsongs.filter(sameserver)
-      pmusic = pmusic.filter(sameserver)
+        if (playingpriv && message.author.id == 307335427331850242) {
+          cserver = cserverp
+        } else {
+          cserver = queueservers[message.guild.id]
+        }
+          if (cserver.queue.length >= 0) message.channel.send(`Erasing the queue for this server...`)
+          for (let x = cserver.queue.length; x >= 0; x--) {
+            cserver.queue.shift()
+          }
+          if (cserver.dispatcher) {
+          cserver.dispatcher.end()
+
+          pmusic2 = pmusic2.filter(sameserver)
+          showsongs = showsongs.filter(sameserver)
+          pmusic = pmusic.filter(sameserver)
+        }
       } else {
         if (message.author.id == 307335427331850242) {
           message.channel.send(`Master, enter a voice channel first.`)
@@ -1121,6 +1285,7 @@ if (order.substring(order.indexOf("bot!") - 1, order.indexOf("bot!")) != "\\") {
             const m = await message.channel.send(`${author}, enter a voice channel first.`)
         }
       }
+
     } else {
         if (message.author.id == 307335427331850242) {
           message.channel.send(`Master, I'm not playing any songs in this server.`)
@@ -1160,7 +1325,7 @@ if (order.substring(order.indexOf("bot!") - 1, order.indexOf("bot!")) != "\\") {
   if (order.includes("status")) {
 
     if (message.author.id == 307335427331850242) {
-      const sub1 = args.substring(order.indexOf("status") + 3)
+      const sub1 = args.substring(order.indexOf("status") + 6)
       if (sub1.toLowerCase().includes("--l")) {
          manualStatus = true
          const sub2 = sub1.replace('--l','')
