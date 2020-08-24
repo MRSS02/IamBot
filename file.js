@@ -476,9 +476,53 @@ if (message.webhookID && message.content.includes("How do you feel being surpass
 
 if (!blacklist.includes(message.author.id)) {
 
+  let emoji
+  let animoji
+  let emojiname
+
   if (message.author.bot) return;
-  const args = message.content
-  const order = args.toLowerCase();
+  let args = message.content
+  let order = args.toLowerCase();
+  if (args.includes("!a<") && args.includes(">!")) animoji = true;
+  if (args.includes("!<") && args.includes(">!")) emoji = true
+  while (animoji) {
+    let emojiname = args.substring(args.indexOf("!a<") + 3, args.indexOf(">!"))
+    args = args.replace("!a<", "<a:")
+    switch (emojiname) {
+      case "mario": args = args.replace(">!", ":747274856952758283>");
+      break;
+      case "spin": args = args.replace(">!", ":747294958125580340>");
+      break;
+      case "sonicwait": args = args.replace(">!", ":728778079115411507>");
+      break;
+      case "jevil": args = args.replace(">!", ":747514177631027250>");
+      break;
+      case "cannibal": args = args.replace(">!", ":747500593177690257>");
+      break;
+      case "mighty": args = args.replace(">!", ":747514718318755950>");
+      break
+      default:
+      args = args.replace(">!", ":>");
+        break;
+    }
+    if (!args.includes("!a<") || !args.includes(">!")) animoji = false;
+  }
+  while (emoji) {
+    let emojiname = args.substring(args.indexOf("!<") + 2, args.indexOf(">!"))
+    args = args.replace("!<", "<:")
+    switch (emojiname) {
+      case "okay": args = args.replace(">!", ":736379500555796590>")
+        break;
+      case "marth": args = args.replace(">!", ":736577172277559317>")
+        break;
+      case "chara": args = args.replace(">!", ":735892270393589870>")
+        break;
+      default:
+       args = args.replace(">!", ":>");
+       break;
+    }
+    if (!args.includes("!<") || !args.includes(">!")) emoji = false;
+  }
   const fchar = parseInt(args.substring(0, 18), 10)
   let play
   if (order.includes("play")) link = args.substring(order.indexOf("play") + 4)
@@ -490,6 +534,7 @@ if (order.includes("!$d")) {
   }
 }
 
+if (message.channel.type !== "dm") {
 try {
 if (message.guild.member(message.author).nickname == null) {
    author = message.author.username
@@ -508,6 +553,7 @@ if (message.guild.member("307335427331850242").nickname == null) {
 }
 } catch (error) {
   owner = message.guild.member("307335427331850242").username
+}
 }
 
 function sameserver(id) {
@@ -995,6 +1041,13 @@ if (order.substring(order.indexOf("bot!") - 1, order.indexOf("bot!")) != "\\") {
   } else {
 
   if (order.includes("play")) {
+    if (!message.member.voice.channel) {
+      if (message.author.id == 307335427331850242) {
+        return message.channel.send(`Master, enter a voice channel first.`)
+      } else {
+          return message.channel.send(`${author}, enter a voice channel first.`)
+      }
+    }
     let cserver
     let stream
     let temp = message.guild.id
@@ -1068,19 +1121,16 @@ if (order.substring(order.indexOf("bot!") - 1, order.indexOf("bot!")) != "\\") {
         })
       }
       if (!playingpriv) {
+        if (!message.member.voice.channel) return message.channel.send(`Master, enter a voice channel first.`);
         privqueue = `queue${plink}`
         if (plist[privqueue].queue[0]) cserverp = JSON.parse(JSON.stringify(plist[privqueue])); else return message.channel.send("Master, this playlist is empty.")
         playingpriv = true
       } else {
         return message.channel.send(`Master, I'm already playing songs on this server...`)
       }
-      if (!message.member.voice.channel) {
-        return message.channel.send(`Master, enter a voice channel first.`)
-      } else {
         message.member.voice.channel.join().then(function(connection){
         playp(connection, message)
         })
-      }
       } else {
         message.channel.send(`Master, this is not a valid predefined playlist.`)
       }
@@ -1096,13 +1146,6 @@ if (order.substring(order.indexOf("bot!") - 1, order.indexOf("bot!")) != "\\") {
         }
       } else {
       checkvalid = ytdl.validateURL(link);
-      if (!message.member.voice.channel) {
-        if (message.author.id == 307335427331850242) {
-          message.channel.send(`Master, enter a voice channel first.`)
-        } else {
-            const m = await message.channel.send(`${author}, enter a voice channel first.`)
-        }
-      } else {
         if(!queueservers[message.guild.id]) {
           queueservers[message.guild.id] = {
           queue: []
@@ -1136,7 +1179,6 @@ if (order.substring(order.indexOf("bot!") - 1, order.indexOf("bot!")) != "\\") {
           })
           }
         }
-      }
       }
     }
 
