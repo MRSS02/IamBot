@@ -1,5 +1,5 @@
 {
-  "name": "I am Bot",
+  "name": "iambot",
   "version": "1.0.0",
   "description": "I am Bot",
   "main": "file.js",
@@ -21,6 +21,7 @@
   "homepage": "https://github.com/MRSS02/IamBot",
   "dependencies": {
     "discord.js": "^12.2.0",
+    "ffmpeg-static": "^4.2.7",
     "opusscript": "0.0.7",
     "ytdl-core": "^3.2.0",
     "ytdl-getinfo": "^1.1.0",
