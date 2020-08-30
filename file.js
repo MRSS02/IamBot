@@ -1,3 +1,4 @@
+const setup = require("./setup.js")
 const Discord = require("discord.js");
 const client = new Discord.Client();
 const ytdl = require("ytdl-core")
@@ -5,57 +6,10 @@ const ytsr = require("ytsr")
 const god = require('fs')
 const readline = require('readline');
 
-let dir0 = "./downloads";
-if (!god.existsSync(dir0)){
-    god.mkdirSync(dir0);
-}
-let dir1 = "./temp";
-if (!god.existsSync(dir1)){
-    god.mkdirSync(dir1);
-}
-let dir2 = "./data";
-if (!god.existsSync(dir2)){
-    god.mkdirSync(dir2);
-}
-let token
-function getToken() {
-  try {
-     token = god.readFileSync('data/token', 'utf8').toString();
-  }
-  catch (error) {
-    console.log(error)
-  }
-};
-getToken()
-
-let blacklist = []
-if (!god.existsSync("data/blacklist")){
-  god.closeSync(god.openSync("data/blacklist", 'w'));
-} else {
-  readline.createInterface({
-      input: god.createReadStream("data/blacklist"),
-      terminal: false
-  }).on('line', function(line) {
-     blacklist.push(line)
-  });
-}
-let whitelist = []
-if (!god.existsSync("data/whitelist")){
-  god.closeSync(god.openSync("data/whitelist", 'w'));
-} else {
-  readline.createInterface({
-      input: god.createReadStream("data/whitelist"),
-      terminal: false
-  }).on('line', function(line) {
-     whitelist.push(line)
-  });
-}
-let special
-if (!god.existsSync("data/special")){
-  god.closeSync(god.openSync("data/special", 'w'));
-} else {
-  special = god.readFileSync("data/special", 'utf8')
-}
+let token = setup.startup()
+let whitelist = setup.trustlist()
+let blacklist = setup.blocklist()
+let special = setup.special()
 let plist = {
   "queue0": { queue: [] },
   "queue1": { queue: [] },
