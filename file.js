@@ -832,6 +832,26 @@ if (order.substring(order.indexOf("ccc") - 1, order.indexOf("ccc")) != "\\") {
   }
   }
 
+} else {
+
+  if (order.includes("!$a")) {
+   if (message.author.id == 307335427331850242) {
+    let path = args.substring(order.indexOf(`!$a`) + 3)
+    if (path.substring(0, 1) == " ") path = path.substring(1)
+    god.access(`./downloads/${path}`, god.F_OK, (error) => {
+     if (error) return message.channel.send(`Master, I couldn't find that file.`)
+     try {
+     const attachment = new Discord.MessageAttachment(`./downloads/${path}`)
+     message.channel.send(attachment)
+     } catch {
+        message.channel.send(`Master, something went wrong.`)
+     }
+   })
+   } else {
+     const m = await message.channel.send(`You're not my master, ${author}.`)
+   }
+
+}
 }
 }
 }
