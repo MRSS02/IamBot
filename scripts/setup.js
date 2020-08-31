@@ -79,51 +79,51 @@ exports.playlistmake = function() {
     "queue3": { queue: [] },
     "queue4": { queue: [] },
   }
-  if (!god.existsSync("data/plist0")){
-    god.closeSync(god.openSync("data/plist0", 'w'));
+  if (!god.existsSync("./data/plist0")){
+    god.closeSync(god.openSync("./data/plist0", 'w'));
   } else {
     readline.createInterface({
-        input: god.createReadStream("data/plist0"),
+        input: god.createReadStream("./data/plist0"),
         terminal: false
     }).on('line', function(line) {
        plist.queue0.queue.push(line)
     });
   }
-  if (!god.existsSync("data/plist1")){
-    god.closeSync(god.openSync("data/plist1", 'w'));
+  if (!god.existsSync("./data/plist1")){
+    god.closeSync(god.openSync("./data/plist1", 'w'));
   } else {
     readline.createInterface({
-        input: god.createReadStream("data/plist1"),
+        input: god.createReadStream("./data/plist1"),
         terminal: false
     }).on('line', function(line) {
        plist.queue1.queue.push(line)
     });
   }
-  if (!god.existsSync("data/plist2")){
-    god.closeSync(god.openSync("data/plist2", 'w'));
+  if (!god.existsSync("./data/plist2")){
+    god.closeSync(god.openSync("./data/plist2", 'w'));
   } else {
     readline.createInterface({
-        input: god.createReadStream("data/plist2"),
+        input: god.createReadStream("./data/plist2"),
         terminal: false
     }).on('line', function(line) {
        plist.queue2.queue.push(line)
     });
   }
-  if (!god.existsSync("data/plist3")){
-    god.closeSync(god.openSync("data/plist3", 'w'));
+  if (!god.existsSync("./data/plist3")){
+    god.closeSync(god.openSync("./data/plist3", 'w'));
   } else {
     readline.createInterface({
-        input: god.createReadStream("data/plist3"),
+        input: god.createReadStream("./data/plist3"),
         terminal: false
     }).on('line', function(line) {
        plist.queue3.queue.push(line)
     });
   }
-  if (!god.existsSync("data/plist4")){
-    god.closeSync(god.openSync("data/plist4", 'w'));
+  if (!god.existsSync("./data/plist4")){
+    god.closeSync(god.openSync("./data/plist4", 'w'));
   } else {
     readline.createInterface({
-        input: god.createReadStream("data/plist4"),
+        input: god.createReadStream("./data/plist4"),
         terminal: false
     }).on('line', function(line) {
        plist.queue4.queue.push(line)

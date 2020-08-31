@@ -1,4 +1,5 @@
-const setup = require("./setup.js")
+const setup = require("./scripts/setup.js")
+const checktime = require("./scripts/checktime.js")
 const Discord = require("discord.js");
 const client = new Discord.Client();
 const ytdl = require("ytdl-core")
@@ -52,221 +53,42 @@ let g6
 let g7
 let g8
 let g9
+async function changeStatus() {
+  let returnedStatus = setup.changeStatus(statusBot, manualStatus, client)
+  statusBot = returnedStatus
+}
+async function updatetime() {
+   let timepromise = checktime(tmin, thour, tdate, tmonth, tyear, timeOutMessage, amessage, v17, v18, v23, v24, ana, bi6to, alarm, currentTime)
+   timepromise.then(returned => {
+   tmin = returned.tmin
+   thour = returned.thour
+   tdate = returned.tdate
+   tmonth = returned.tmonth
+   tyear = returned.tyear
+   timeOutMessage = returned.timeOutMessage
+   amessage = returned.amessage
+   v18 = returned.v18
+   v17 = returned.v17
+   v23 = returned.v23
+   v24 = returned.v24
+   ana = returned.ana
+   bi6to = returned.bi6to
+   alarm = returned.alarm
+   currentTime = returned.currentTime
+   })
+}
 
 
 
-//This is logged when the bot is initialized.
+//Initializing the bot
 client.on("ready", () => {
   console.log(`Hey. I was initialized inside ${client.guilds.cache.size} servers.`);
   let initialact = Math.round(Math.random())
   if (initialact == 0) client.user.setActivity("Meleeeee!"); else client.user.setActivity("DELTARUNE chap. 2");
-  checktime()
-  setInterval(changeStatus, 10000)
-  setInterval(checktime, 60000)
+  updatetime()
+  setInterval(changeStatus, 1200000)
+  setInterval(updatetime, 60000)
 });
-
-function changeStatus() {
-  let returnedStatus = setup.changeStatus(statusBot, manualStatus, client)
-  statusBot = returnedStatus
-}
-
-async function checktime() {
-  let horario = Date.now()
-  let harario = Math.floor(horario * Math.pow(86400000, -1))
-  let hirario = harario * 86400000
-  let herario = horario - hirario
-  herario = herario * Math.pow(60000, -1)
-  let onset = new Date().getTimezoneOffset()
-  herario = herario - onset
-  if (herario < 0) herario += 1440
-  let semana = Date.now()
-  onset = new Date().getTimezoneOffset()
-  onset *= 60000
-  semana -= onset
-  let samana = Math.floor(semana * Math.pow(604800000, -1))
-  let simana = samana * 604800000
-  let somana = semana - simana
-  let sumana = somana % 86400000
-  somana -= sumana
-  somana = somana * (Math.pow(86400000, -1))
-  let ano = Date.now()
-  onset = new Date().getTimezoneOffset()
-  onset *= 60000
-  ano -= onset
-  ana = Math.floor(semana * Math.pow(126230400000, -1))
-  let ani = ana * 126230400000
-  let anoo = ano - ani
-
-  let anu = anoo % 86400000
-  anoo -= anu
-  anoo = anoo * (Math.pow(86400000, -1))
-  ana = ana * 4
-  ana += 1970
-
-  v17 = Math.floor(herario / 60)
-  v18 = Math.floor(herario % 60)
-  if (anoo < 730) {
-    if (anoo > 364) {
-      ana += 1
-      anoo -= 365
-    }
-    bi6to = false
-  } else {
-    if (anoo > 1095) {
-      ana += 3
-      anoo -= 1096
-      bi6to = false
-    } else {
-      ana += 2
-      anoo -= 730
-      bi6to = true
-    }
-  }
-
-if (bi6to) {
-    if (anoo < 31) {
-      v23 = anoo
-      v24 = 1
-    } else {
-      if (anoo < 60) {
-        v23 = anoo - 31
-        v24 = 2
-      } else {
-        if (anoo < 91) {
-          v23 = anoo - 60
-          v24 = 3
-        } else {
-          if (anoo < 121) {
-            v23 = anoo - 91
-            v24 = 4
-          } else {
-            if (anoo < 152) {
-              v23 = anoo - 121
-              v24 = 5
-            } else {
-              if (anoo < 182) {
-                v23 = anoo - 152
-                v24 = 6
-              } else {
-                if (anoo < 213) {
-                  v23 = anoo - 182
-                  v24 = 7
-                } else {
-                  if (anoo < 244) {
-                    v23 = anoo - 213
-                    v24 = 8
-                  } else {
-                    if (anoo < 274) {
-                      v23 = anoo - 244
-                      v24 = 9
-                    } else {
-                      if (anoo < 305) {
-                        v23 = anoo - 274
-                        v24 = 10
-                      } else {
-                        if (anoo < 335) {
-                          v23 = anoo - 305
-                          v24 = 11
-                        } else {
-                            v23 = anoo - 335
-                            v24 = 12
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-} else {
-    if (anoo < 31) {
-      v23 = anoo
-      v24 = 1
-    } else {
-      if (anoo < 59) {
-        v23 = anoo - 31
-        v24 = 2
-      } else {
-        if (anoo < 90) {
-          v23 = anoo - 59
-          v24 = 3
-        } else {
-          if (anoo < 120) {
-            v23 = anoo - 90
-            v24 = 4
-          } else {
-            if (anoo < 151) {
-              v23 = anoo - 120
-              v24 = 5
-            } else {
-              if (anoo < 181) {
-                v23 = anoo - 151
-                v24 = 6
-              } else {
-                if (anoo < 212) {
-                  v23 = anoo - 181
-                  v24 = 7
-                } else {
-                  if (anoo < 243) {
-                    v23 = anoo - 212
-                    v24 = 8
-                  } else {
-                    if (anoo < 273) {
-                      v23 = anoo - 243
-                      v24 = 9
-                    } else {
-                      if (anoo < 304) {
-                        v23 = anoo - 273
-                        v24 = 10
-                      } else {
-                        if (anoo < 334) {
-                          v23 = anoo - 304
-                          v24 = 11
-                        } else {
-                            v23 = anoo - 334
-                            v24 = 12
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-
-  v23 += 1
-  //v17 = hours
-  //v18 = minutes
-  //v23 = date
-  //v24 = month
-  //ana = year
-  if (v17 < 10) {
-    if (v18 < 10) {
-      currentTime = `${v24}/${v23}/${ana} 0${v17}:0${v18}`
-    } else {
-      currentTime = `${v24}/${v23}/${ana} 0${v17}:${v18}`
-    }
-  } else {
-    if (v18 < 10) {
-      currentTime = `${v24}/${v23}/${ana} ${v17}:0${v18}`
-    } else {
-      currentTime = `${v24}/${v23}/${ana} ${v17}:${v18}`
-    }
-
-  }
-
-  if (alarm && tmin == v18 && thour == v17 && tdate == v23 && tmonth == v24 && tyear == ana) {
-      const m = await amessage.send(timeOutMessage)
-      alarm = false
-  }
-}
 
 //This is logged when the bot enters a new server.
 client.on("guildCreate", guild => {
@@ -277,8 +99,6 @@ client.on("guildCreate", guild => {
 client.on("guildDelete", guild => {
   console.log(`I just left the server "${guild.name}" (ID: ${guild.id})...`);
 });
-
-
 
 
 //This sets the bot messages.
