@@ -194,6 +194,8 @@ if (bi6to) {
       const m = await amessage.send(timeOutMessage)
       alarm = false
   }
+
+//return variable data
   let vardata = {
     tmin: tmin, thour: thour, tdate: tdate,
     tmonth: tmonth, tyear: tyear, timeOutMessage: timeOutMessage,
