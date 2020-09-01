@@ -7,60 +7,49 @@ const god = require('fs')
 const readline = require('readline');
 
 //Setting up the bot
-let token = setup.startup()
-let trustlist = setup.trustlist()
-let blocklist = setup.blocklist()
-let special = setup.special()
-let plist = setup.playlistmake()
-let helpcommands = setup.sethelp()
-let playingpriv = false
-let privqueue = 0
-let cserverp
-let queueservers = {}
-let pmusic = []
-let pmusic2 = []
-let showsongs = []
-let tmin
-let thour
-let tdate
-let tmonth
-let tyear
-let timeOutMessage
-let amessage
-let v18
-let v17
-let v23
-let v24
-let ana
-let statusBot = true
-let manualStatus = false
-let bi6to
-let alarm = false
-let currentTime
-let globals = { }
+const token = setup.startup()
+const globals = {
+  trustlist: setup.trustlist(),
+  blocklist: setup.blocklist(),
+  special: setup.special(),
+  plist: setup.playlistmake(),
+  helpcommands: setup.sethelp(),
+  playingpriv: false,
+  privqueue: 0,
+  cserverp: false,
+  queueservers: {},
+  pmusic: [],
+  pmusic2: [],
+  showsongs: [],
+  tmin: false,
+  thour: false,
+  tdate: false,
+  tmonth: false,
+  tyear: false,
+  timeOutMessage: false,
+  amessage: false,
+  v18: false,
+  v17: false,
+  v23: false,
+  v24: false,
+  ana: false,
+  statusBot: true,
+  manualStatus: false,
+  bi6to: false,
+  alarm: false,
+  currentTime: false
+}
 
 async function changeStatus() {
-  let returnedStatus = setup.changeStatus(statusBot, manualStatus, client)
-  statusBot = returnedStatus
+  let returnedStatus = setup.changeStatus(globals, client)
+  globals.statusBot = returnedStatus
 }
 async function updatetime() {
-   let timepromise = checktime(tmin, thour, tdate, tmonth, tyear, timeOutMessage, amessage, v17, v18, v23, v24, ana, bi6to, alarm, currentTime)
+   let timepromise = checktime(globals)
    timepromise.then(returned => {
-   tmin = returned.tmin
-   thour = returned.thour
-   tdate = returned.tdate
-   tmonth = returned.tmonth
-   tyear = returned.tyear
-   timeOutMessage = returned.timeOutMessage
-   amessage = returned.amessage
-   v18 = returned.v18
-   v17 = returned.v17
-   v23 = returned.v23
-   v24 = returned.v24
-   ana = returned.ana
-   bi6to = returned.bi6to
-   alarm = returned.alarm
-   currentTime = returned.currentTime
+   for (var item in returned) {
+     globals[item] = returned[item]
+   }
    })
 }
 
@@ -89,39 +78,11 @@ client.on("guildDelete", guild => {
 
 //This sets the bot commands.
 client.on("message", async message => {
-let returned = await commands(client, message, trustlist, blocklist, special, plist, helpcommands, playingpriv,
-privqueue, cserverp, queueservers, pmusic, pmusic2, showsongs, tmin, thour, tdate, tyear, timeOutMessage,
-amessage, v17, v18, v23, v24, ana, statusBot, manualStatus, bi6to, alarm, currentTime, globals, updatetime)
+let returned = await commands(client, message, globals, updatetime)
 //recover returned variable data
-trustlist = returned.trustlist
-blocklist = returned.blocklist
-special = returned.special
-plist = returned.plist
-helpcommands = returned.helpcommands
-playingpriv = returned.playingpriv
-privqueue = returned.privqueue
-cserverp = returned.cserverp
-queueservers = returned.queueservers
-pmusic = returned.pmusic
-pmusic2 = returned.pmusic2
-showsongs = returned.showsongs
-tmin = returned.tmin
-thour = returned.thour
-tdate = returned.tdate
-tyear = returned.tyear
-timeOutMessage = returned.timeOutMessage
-amessage = returned.amessage
-v17 = returned.v17
-v18 = returned.v18
-v23 = returned.v23
-v24 = returned.v24
-ana = returned.ana
-statusBot = returned.statusbot
-manualStatus = returned.manualStatus
-bi6to = returned.bi6to
-alarm = returned.alarm
-currentTime = returned.currentTime
-globals = returned.globals
+for (var item in returned) {
+  globals[item] = returned[item]
+}
 
 });
 

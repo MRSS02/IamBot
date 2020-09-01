@@ -2,66 +2,28 @@ const god = require('fs')
 const Discord = require("discord.js");
 const ytdl = require("ytdl-core")
 const ytsr = require("ytsr")
+const commands = {
+  emoji: require('./commands/emoji.js')
+}
 
-module.exports = function(client, message, trustlist, blocklist, special, plist, helpcommands, playingpriv, privqueue, cserverp, queueservers, pmusic, pmusic2, showsongs, tmin, thour, tdate, tyear, timeOutMessage, amessage, v17, v18, v23, v24, ana, statusBot, manualStatus, bi6to, alarm, currentTime, globals, checktime) {
+module.exports = function(client, message, globals, checktime) {
+
 let vardata
 async function wait() {
 try {
 
 if (message.webhookID && message.content.includes("How do you feel being surpassed by me, <@!735574382096679052>?")) {
  const m = message.channel.send("Could you leave me alone, <@!159985870458322944>?");
- return
+return
 }
 
-if (!blocklist.includes(message.author.id)) {
-
-  let emoji
-  let animoji
-  let emojiname
+if (!globals.blocklist.includes(message.author.id)) {
 
   if (message.author.bot) return;
   let args = message.content
   let order = args.toLowerCase();
-  if (args.includes("!a<") && args.includes(">!")) animoji = true;
-  if (args.includes("!<") && args.includes(">!")) emoji = true
-  while (animoji) {
-    let emojiname = args.substring(args.indexOf("!a<") + 3, args.indexOf(">!"))
-    args = args.replace("!a<", "<a:")
-    switch (emojiname) {
-      case "mario": args = args.replace(">!", ":747274856952758283>");
-      break;
-      case "spin": args = args.replace(">!", ":747294958125580340>");
-      break;
-      case "sonicwait": args = args.replace(">!", ":728778079115411507>");
-      break;
-      case "jevil": args = args.replace(">!", ":747514177631027250>");
-      break;
-      case "cannibal": args = args.replace(">!", ":747500593177690257>");
-      break;
-      case "mighty": args = args.replace(">!", ":747514718318755950>");
-      break
-      default:
-      args = args.replace(">!", ":>");
-        break;
-    }
-    if (!args.includes("!a<") || !args.includes(">!")) animoji = false;
-  }
-  while (emoji) {
-    let emojiname = args.substring(args.indexOf("!<") + 2, args.indexOf(">!"))
-    args = args.replace("!<", "<:")
-    switch (emojiname) {
-      case "okay": args = args.replace(">!", ":736379500555796590>")
-        break;
-      case "marth": args = args.replace(">!", ":736577172277559317>")
-        break;
-      case "chara": args = args.replace(">!", ":735892270393589870>")
-        break;
-      default:
-       args = args.replace(">!", ":>");
-       break;
-    }
-    if (!args.includes("!<") || !args.includes(">!")) emoji = false;
-  }
+  if (args.includes("!a<") && args.includes(">!") || args.includes("!<") && args.includes(">!")) args = commands.emoji(args)
+
   const fchar = parseInt(args.substring(0, 18), 10)
   let play
   if (order.includes("play")) link = args.substring(order.indexOf("play") + 4)
@@ -99,13 +61,13 @@ function sameserver(id) {
     if (id != message.guild.id) return id
 }
 
-  if (order.includes("--hide") && trustlist.includes(message.author.id) || order.includes("--hide") && message.author.id == 307335427331850242) {
-    showsongs = showsongs.filter(sameserver)
+  if (order.includes("--hide") && globals.trustlist.includes(message.author.id) || order.includes("--hide") && message.author.id == 307335427331850242) {
+    globals.showsongs = globals.showsongs.filter(sameserver)
 
   } else {
 
-  if (order.includes("--show") && trustlist.includes(message.author.id) || order.includes("--show") && message.author.id == 307335427331850242) {
-    showsongs.push(message.guild.id)
+  if (order.includes("--show") && globals.trustlist.includes(message.author.id) || order.includes("--show") && message.author.id == 307335427331850242) {
+    globals.showsongs.push(message.guild.id)
 
   }
   }
@@ -234,7 +196,7 @@ if (order.substring(order.indexOf("ccc") - 1, order.indexOf("ccc")) != "\\") {
       if (c.substring(0, 1) == "!") c = c.substring(1)
       message.channel.send(c)
   } else {
-    if (trustlist.includes(message.author.id)) {
+    if (globals.trustlist.includes(message.author.id)) {
       message.delete()
       if (c.substring(0, 1) == "!") c = c.substring(1)
       if (c.substring(0,1) == " ") c = c.substring(1)
@@ -250,7 +212,7 @@ if (order.substring(order.indexOf("ccc") - 1, order.indexOf("ccc")) != "\\") {
    if (order.substring(order.indexOf("%%") - 1, order.indexOf("%%")) != "\\") {
      let hexcol
      let c
-     if (message.author.id == 307335427331850242 || trustlist.includes(message.author.id)) {
+     if (message.author.id == 307335427331850242 || globals.trustlist.includes(message.author.id)) {
        message.delete()
        const emb = new Discord.MessageEmbed()
        c = args.replace("%%", '')
@@ -617,17 +579,17 @@ if (order.substring(order.indexOf("bot!") - 1, order.indexOf("bot!")) != "\\") {
       let firstsong = info.title
       let lastsong = infoa.title
       stream = ytdl(cserver.queue[0], { filter: "audioonly"})
-      if (!pmusic.includes(message.guild.id)) splay = true; else splay = false
+      if (!globals.pmusic.includes(message.guild.id)) splay = true; else splay = false
       if (splay) {
-      pmusic.push(message.guild.id)
-      pmusic2.push(message.guild.id)
+      globals.pmusic.push(message.guild.id)
+      globals.pmusic2.push(message.guild.id)
       const musicplay = stream.pipe(god.createWriteStream(`temp/${temp}`)).on("close", async function() {
-      if (showsongs.includes(message.guild.id)) message.channel.send(`Now playing "${firstsong}"...`)
+      if (globals.showsongs.includes(message.guild.id)) message.channel.send(`Now playing "${firstsong}"...`)
       cserver.dispatcher = con.play(god.createReadStream(`temp/${temp}`))
       cserver.queue.shift()
       cserver.dispatcher.on("finish", function(){
-        pmusic = pmusic.filter(sameserver)
-        pmusic2 = pmusic2.filter(sameserver)
+        globals.pmusic = globals.pmusic.filter(sameserver)
+        globals.pmusic2 = globals.pmusic2.filter(sameserver)
         if(cserver.queue[0]){
           play(con, mes)
         } else {
@@ -637,7 +599,7 @@ if (order.substring(order.indexOf("bot!") - 1, order.indexOf("bot!")) != "\\") {
       })
       })
       } else {
-        if (showsongs.includes(message.guild.id)) {
+        if (globals.showsongs.includes(message.guild.id)) {
           if (message.author.id == 307335427331850242) {
             message.channel.send(`Master, "${lastsong}" was added to the queue.`)
           } else {
@@ -650,7 +612,7 @@ if (order.substring(order.indexOf("bot!") - 1, order.indexOf("bot!")) != "\\") {
     let checkvalid = false
     link = link.replace(/ /g, "")
     let plink
-    if (!order.includes("--h")) showsongs.push(message.guild.id)
+    if (!order.includes("--h")) globals.showsongs.push(message.guild.id)
     if (order.includes("--p")) {
       plink = order.substring(order.indexOf("--p") + 3)
       if (message.author.id == 307335427331850242) {
@@ -659,19 +621,19 @@ if (order.substring(order.indexOf("bot!") - 1, order.indexOf("bot!")) != "\\") {
         let info = await ytdl.getInfo(cserverp.queue[0])
         let firstsong = info.title
         stream = ytdl(cserverp.queue[0], { quality:"highestaudio", filter: "audioonly"})
-        pmusic.push(message.guild.id)
-        pmusic2.push(message.guild.id)
+        globals.pmusic.push(message.guild.id)
+        globals.pmusic2.push(message.guild.id)
         const musicplay = stream.pipe(god.createWriteStream(`temp/${temp}`)).on("close", async function() {
-        if (showsongs.includes(message.guild.id)) message.channel.send(`Now playing "${firstsong}"...`)
+        if (globals.showsongs.includes(message.guild.id)) message.channel.send(`Now playing "${firstsong}"...`)
         cserverp.dispatcher = con.play(god.createReadStream(`temp/${temp}`))
         cserverp.queue.shift()
         cserverp.dispatcher.on("finish", function(){
-          pmusic = pmusic.filter(sameserver)
-          pmusic2 = pmusic2.filter(sameserver)
+          globals.pmusic = globals.pmusic.filter(sameserver)
+          globals.pmusic2 = globals.pmusic2.filter(sameserver)
           if(cserverp.queue[0]){
             playp(con, mes)
           } else {
-            playingpriv = false
+            globals.playingpriv = false
             privqueue = 0
             message.channel.send(`No songs left to play, now disconecting...`)
             con.disconnect()
@@ -679,11 +641,11 @@ if (order.substring(order.indexOf("bot!") - 1, order.indexOf("bot!")) != "\\") {
         })
         })
       }
-      if (!playingpriv) {
+      if (!globals.playingpriv) {
         if (!message.member.voice.channel) return message.channel.send(`Master, enter a voice channel first.`);
         privqueue = `queue${plink}`
-        if (plist[privqueue].queue[0]) cserverp = JSON.parse(JSON.stringify(plist[privqueue])); else return message.channel.send("Master, this playlist is empty.")
-        playingpriv = true
+        if (globals.plist[privqueue].queue[0]) cserverp = JSON.parse(JSON.stringify(globals.plist[privqueue])); else return message.channel.send("Master, this playlist is empty.")
+        globals.playingpriv = true
       } else {
         return message.channel.send(`Master, I'm already playing songs on this server...`)
       }
@@ -697,7 +659,7 @@ if (order.substring(order.indexOf("bot!") - 1, order.indexOf("bot!")) != "\\") {
         message.channel.send(`Only my master has permission to use this flag, ${author}.`)
       }
     } else {
-      if (playingpriv) {
+      if (globals.playingpriv) {
         if (message.author.id == 307335427331850242) {
           message.channel.send(`Master, I'm already playing your personal playlist.`)
         } else {
@@ -705,12 +667,12 @@ if (order.substring(order.indexOf("bot!") - 1, order.indexOf("bot!")) != "\\") {
         }
       } else {
       checkvalid = ytdl.validateURL(link);
-        if(!queueservers[message.guild.id]) {
-          queueservers[message.guild.id] = {
+        if(!globals.queueservers[message.guild.id]) {
+          globals.queueservers[message.guild.id] = {
           queue: []
           }
         }
-        cserver = queueservers[message.guild.id]
+        cserver = globals.queueservers[message.guild.id]
         if (checkvalid) {
          cserver.queue.push(link)
         } else {
@@ -746,14 +708,14 @@ if (order.substring(order.indexOf("bot!") - 1, order.indexOf("bot!")) != "\\") {
 
   if (order.includes("queue")) {
 
-    if (!pmusic2.includes(message.guild.id)) {
+    if (!globals.pmusic2.includes(message.guild.id)) {
     if (message.author.id == 307335427331850242) {
       message.channel.send(`Master, I'm not playing any songs in this server.`)
     } else {
         message.channel.send(`${author}, I'm not playing any songs in this server.`)
     }
     } else {
-     if (playingpriv && message.author.id == 307335427331850242) {
+     if (globals.playingpriv && message.author.id == 307335427331850242) {
        let cserver = cserverp
        let queuenames = []
        for (let x = 0; x < cserver.queue.length; x++) {
@@ -784,10 +746,10 @@ if (order.substring(order.indexOf("bot!") - 1, order.indexOf("bot!")) != "\\") {
          }
        }
      } else {
-       let cserver = queueservers[message.guild.id]
+       let cserver = globals.queueservers[message.guild.id]
        let queuenames = []
        for (let x = 0; x < cserver.queue.length; x++) {
-         ytdl.getInfo(cserver.queue[x])
+         info = ytdl.getInfo(cserver.queue[x])
          let namesong = info.title
          queuenames.push(namesong)
        }
@@ -828,7 +790,7 @@ if (order.substring(order.indexOf("bot!") - 1, order.indexOf("bot!")) != "\\") {
 
     let cserver
     let notplaying
-    if (pmusic.includes(message.guild.id)) notplaying = false; else notplaying = true;
+    if (globals.pmusic.includes(message.guild.id)) notplaying = false; else notplaying = true;
     if (notplaying) {
       if (message.author.id == 307335427331850242) {
         message.channel.send(`Master, I'm not playing any songs in this server.`)
@@ -837,12 +799,12 @@ if (order.substring(order.indexOf("bot!") - 1, order.indexOf("bot!")) != "\\") {
       }
     } else {
       if (message.member.voice.channel) {
-      if (playingpriv && message.author.id == 307335427331850242) {
+      if (globals.playingpriv && message.author.id == 307335427331850242) {
         cserver = cserverp
       } else {
-        cserver = queueservers[message.guild.id]
+        cserver = globals.queueservers[message.guild.id]
       }
-      pmusic = pmusic.filter(sameserver)
+      globals.pmusic = globals.pmusic.filter(sameserver)
         if (cserver.dispatcher) {
         cserver.dispatcher.end()
         }
@@ -861,12 +823,12 @@ if (order.substring(order.indexOf("bot!") - 1, order.indexOf("bot!")) != "\\") {
 
     let cserver
 
-    if (pmusic.includes(message.guild.id)) {
+    if (globals.pmusic.includes(message.guild.id)) {
       if (message.member.voice.channel) {
-        if (playingpriv && message.author.id == 307335427331850242) {
+        if (globals.playingpriv && message.author.id == 307335427331850242) {
           cserver = cserverp
         } else {
-          cserver = queueservers[message.guild.id]
+          cserver = globals.queueservers[message.guild.id]
         }
           if (cserver.queue.length >= 0) message.channel.send(`Erasing the queue for this server...`)
           for (let x = cserver.queue.length; x >= 0; x--) {
@@ -875,9 +837,9 @@ if (order.substring(order.indexOf("bot!") - 1, order.indexOf("bot!")) != "\\") {
           if (cserver.dispatcher) {
           cserver.dispatcher.end()
 
-          pmusic2 = pmusic2.filter(sameserver)
-          showsongs = showsongs.filter(sameserver)
-          pmusic = pmusic.filter(sameserver)
+          globals.pmusic2 = globals.pmusic2.filter(sameserver)
+          globals.showsongs = globals.showsongs.filter(sameserver)
+          globals.pmusic = globals.pmusic.filter(sameserver)
         }
       } else {
         if (message.author.id == 307335427331850242) {
@@ -1005,14 +967,14 @@ if (order.substring(order.indexOf("bot!") - 1, order.indexOf("bot!")) != "\\") {
          god.writeFile("data/special", special, function (error) {})
          message.channel.send(`I've set the default alarm message to "${special}", master.`)
         } else {
-          if (trustlist.includes(message.author.id)) {
+          if (globals.trustlist.includes(message.author.id)) {
             message.channel.send(`Only my master has permission to use this flag, ${author}.`)
           } else {
             message.channel.send(`You're not my master, ${author}.`)
           }
         }
       } else {
-      if (message.author.id == 307335427331850242 || trustlist.includes(message.author.id)) {
+      if (message.author.id == 307335427331850242 || globals.trustlist.includes(message.author.id)) {
        if (order.includes("--del")) {
          if (alarm) {
          alarm = false
@@ -1243,7 +1205,7 @@ if (order.substring(order.indexOf("bot!") - 1, order.indexOf("bot!")) != "\\") {
      if (message.author.id == 307335427331850242) {
          message.channel.send(`Ha\nHa\nHa\n\nI'm laughing so much, master ${author}.`)
      } else {
-       if (trustlist.includes(message.author.id)) {
+       if (globals.trustlist.includes(message.author.id)) {
           message.channel.send(`Ha\nHa\nHa\n\nI'm laughing so much, ${author}.`)
        } else {
           message.channel.send(`You're not my master, ${author}.`)
@@ -1285,23 +1247,23 @@ if (order.substring(order.indexOf("bot!") - 1, order.indexOf("bot!")) != "\\") {
           message.channel.send(`I don't recognize that user, master!`)
         } else {
         let remove
-        if (blocklist.includes(trust)) {
+        if (globals.blocklist.includes(trust)) {
           remove = true
         }
         if (remove) {
           function data(id) {
             if (id != trust) return id
           }
-          blocklist = blocklist.filter(data)
-          let data0 = blocklist.join("\n")
-          let rewrite = god.promises.writeFile('data/blocklist', data0, 'utf8', {'flags': 'r+'});
+          globals.blocklist = globals.blocklist.filter(data)
+          let data0 = globals.blocklist.join("\n")
+          let rewrite = god.promises.writeFile('./data/blocklist', data0, 'utf8', {'flags': 'r+'});
         }
 
-        if (trustlist.includes(trust)) {
+        if (globals.trustlist.includes(trust)) {
           const m = message.channel.send(`Master, I already trust ${trustable}.`)
           } else {
-          let add = god.promises.appendFile('data/trustlist', `${trust}\n`, 'utf8', {'flags': 'a+'});
-          trustlist.push(trust)
+          let add = god.promises.appendFile('./data/trustlist', `${trust}\n`, 'utf8', {'flags': 'a+'});
+          globals.trustlist.push(trust)
           message.channel.send(`I now trust ${trustable}, master!`)
           }
         }
@@ -1339,22 +1301,22 @@ if (order.substring(order.indexOf("bot!") - 1, order.indexOf("bot!")) != "\\") {
          message.channel.send(`I don't recognize that user, master!`)
        } else {
        let remove
-       if (trustlist.includes(block)) {
+       if (globals.trustlist.includes(block)) {
          remove = true
        }
        if (remove) {
          function data(id) {
            if (id != block) return id
          }
-         trustlist = trustlist.filter(data)
-         let data0 = trustlist.join("\n")
+         globals.trustlist = globals.trustlist.filter(data)
+         let data0 = globals.trustlist.join("\n")
          let rewrite = god.promises.writeFile('./data/trustlist', data0, 'utf8', {'flags': 'r+'});
        }
-         if (blocklist.includes(block)) {
+         if (globals.blocklist.includes(block)) {
            const m = message.channel.send(`Master, I already blocked ${blockable}.`)
          } else {
            let add = god.promises.appendFile('./data/blocklist', `${block}\n`, 'utf8', {'flags': 'a+'});
-           blocklist.push(block)
+           globals.blocklist.push(block)
            message.channel.send(`I blocked ${blockable}, master.`)
 
          }
@@ -1392,23 +1354,23 @@ if (order.substring(order.indexOf("bot!") - 1, order.indexOf("bot!")) != "\\") {
          if (nouser) {
            message.channel.send(`I don't recognize that user, master!`)
          } else {
-         if (trustlist.includes(rest)) {
+         if (globals.trustlist.includes(rest)) {
 
          function data(id) {
            if (id != rest) return id
          }
-         trustlist = trustlist.filter(data)
-         let data0 = trustlist.join("\n")
+         globals.trustlist = globals.trustlist.filter(data)
+         let data0 = globals.trustlist.join("\n")
          god.promises.writeFile('./data/trustlist', data0, 'utf8', {'flags': 'r+'});
          const m = message.channel.send(`I stopped trusting ${restable}, master.`)
          } else {
-           if (blocklist.includes(rest)) {
+           if (globals.blocklist.includes(rest)) {
 
            function data(id) {
              if (id != rest) return id
            }
-           blocklist = blocklist.filter(data)
-           let data0 = blocklist.join("\n")
+           globals.blocklist = globals.blocklist.filter(data)
+           let data0 = globals.blocklist.join("\n")
            let rewrite = god.promises.writeFile('./data/blocklist', data0, 'utf8', {'flags': 'r+'});
            message.channel.send(`I unblocked ${restable}, master.`)
          } else {
@@ -1428,7 +1390,7 @@ if (order.substring(order.indexOf("bot!") - 1, order.indexOf("bot!")) != "\\") {
     if (message.author.id == 307335427331850242) {
         message.channel.send(`Hi, master ${author}. How can I serve you?`)
     } else {
-      if (trustlist.includes(message.author.id)) {
+      if (globals.trustlist.includes(message.author.id)) {
         message.channel.send(`Hi, ${author}. \nAs you are Master's friend, you're welcome. \nHow can I serve you?`)
       } else {
         message.channel.send(`You're not my master, ${author}.`)
@@ -1441,7 +1403,7 @@ if (order.substring(order.indexOf("bot!") - 1, order.indexOf("bot!")) != "\\") {
    if (message.author.id == 307335427331850242) {
        message.channel.send(`You're welcome, master ${author}!`)
    } else {
-     if (trustlist.includes(message.author.id)) {
+     if (globals.trustlist.includes(message.author.id)) {
        message.channel.send(`You're welcome, <@${message.author.id}>.`)
      } else {
        message.channel.send(`You're not my master, ${author}.`)
@@ -1453,7 +1415,7 @@ if (order.substring(order.indexOf("bot!") - 1, order.indexOf("bot!")) != "\\") {
     if (message.author.id == 307335427331850242) {
       message.channel.send(`I didn't quite understand your order, master ${author}.`)
     } else {
-      if (trustlist.includes(message.author.id)) {
+      if (globals.trustlist.includes(message.author.id)) {
         message.channel.send(`I didn't quite understand your order, ${author}.`)
       } else {
         message.channel.send(`You're not my master, ${author}.`)
@@ -1493,23 +1455,8 @@ if (order.substring(order.indexOf("bot!") - 1, order.indexOf("bot!")) != "\\") {
   }
 }
 }
-wait().then(
-//return variable data
-vardata = {
-  trustlist: trustlist,
-  blocklist: blocklist, special: special, plist: plist,
-  helpcommands: helpcommands, playingpriv: playingpriv,
-  privqueue: privqueue, cserverp: cserverp, queueservers: queueservers,
-  pmusic: pmusic, pmusic2: pmusic2, showsongs: showsongs,
-  tmin: tmin, thour: thour, tdate: tdate,
-  tyear: tyear, timeOutMessage: timeOutMessage, amessage: amessage,
-  v17: v17, v18: v18, v23: v23,
-  v24: v24, ana: ana, statusBot: statusBot,
-  manualStatus: manualStatus, bi6to: bi6to,
-  alarm: alarm, currentTime: currentTime, globals: globals
-}
-)
+wait().then() //blocking my code on purpose cause i need it
 
-return vardata
+return globals
 
 }

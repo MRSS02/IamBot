@@ -217,12 +217,12 @@ exports.sethelp = function() {
   return helpcommands
 }
 
-exports.changeStatus = function(statusBot, manualStatus, client) {
-  if (statusBot) {
-     if (!manualStatus) client.user.setActivity("Meleeeee!");
+exports.changeStatus = function(globals, client) {
+  if (globals.statusBot) {
+     if (!globals.manualStatus) client.user.setActivity("Meleeeee!");
   } else {
-     if (!manualStatus) client.user.setActivity("DELTARUNE chap. 2");
+     if (!globals.manualStatus) client.user.setActivity("DELTARUNE chap. 2");
   }
-  statusBot = !statusBot
-  return statusBot
+  globals.statusBot = !globals.statusBot
+  return globals.statusBot
 }
