@@ -89,9 +89,9 @@ client.on("guildDelete", guild => {
 
 //This sets the bot commands.
 client.on("message", async message => {
-let process = commands(client, message, trustlist, blocklist, special, plist, helpcommands, playingpriv,
+let returned = await commands(client, message, trustlist, blocklist, special, plist, helpcommands, playingpriv,
 privqueue, cserverp, queueservers, pmusic, pmusic2, showsongs, tmin, thour, tdate, tyear, timeOutMessage,
-amessage, v17, v18, v23, v24, ana, statusBot, manualStatus, bi6to, alarm, currentTime, globals, updatetime).then(returned => {
+amessage, v17, v18, v23, v24, ana, statusBot, manualStatus, bi6to, alarm, currentTime, globals, updatetime)
 //recover returned variable data
 trustlist = returned.trustlist
 blocklist = returned.blocklist
@@ -122,7 +122,7 @@ bi6to = returned.bi6to
 alarm = returned.alarm
 currentTime = returned.currentTime
 globals = returned.globals
-}).catch()
+
 });
 
 //This sets the bot online.

@@ -3,8 +3,9 @@ const Discord = require("discord.js");
 const ytdl = require("ytdl-core")
 const ytsr = require("ytsr")
 
-module.exports = async function(client, message, trustlist, blocklist, special, plist, helpcommands, playingpriv, privqueue, cserverp, queueservers, pmusic, pmusic2, showsongs, tmin, thour, tdate, tyear, timeOutMessage, amessage, v17, v18, v23, v24, ana, statusBot, manualStatus, bi6to, alarm, currentTime, globals, checktime) {
-
+module.exports = function(client, message, trustlist, blocklist, special, plist, helpcommands, playingpriv, privqueue, cserverp, queueservers, pmusic, pmusic2, showsongs, tmin, thour, tdate, tyear, timeOutMessage, amessage, v17, v18, v23, v24, ana, statusBot, manualStatus, bi6to, alarm, currentTime, globals, checktime) {
+let vardata
+async function wait() {
 try {
 
 if (message.webhookID && message.content.includes("How do you feel being surpassed by me, <@!735574382096679052>?")) {
@@ -1491,9 +1492,10 @@ if (order.substring(order.indexOf("bot!") - 1, order.indexOf("bot!")) != "\\") {
     console.log(error)
   }
 }
-
+}
+wait().then(
 //return variable data
-let vardata = {
+vardata = {
   trustlist: trustlist,
   blocklist: blocklist, special: special, plist: plist,
   helpcommands: helpcommands, playingpriv: playingpriv,
@@ -1506,6 +1508,7 @@ let vardata = {
   manualStatus: manualStatus, bi6to: bi6to,
   alarm: alarm, currentTime: currentTime, globals: globals
 }
+)
 
 return vardata
 
