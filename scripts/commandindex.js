@@ -384,8 +384,8 @@ if (order.substring(order.indexOf("bot!") - 1, order.indexOf("bot!")) != "\\") {
       function findcmd(cmdtofind) {
         if (cmdtofind.prefix.includes(searchitem)) return cmdtofind
       }
-      let foundcmd = helpcommands.user.filter(findcmd)
-      if (!foundcmd[0]) foundcmd = helpcommands.user.filter(findcmd); else foundcmd = foundcmd.concat(helpcommands.user.filter(findcmd))
+      let foundcmd = globals.helpcommands.user.filter(findcmd)
+      if (!foundcmd[0]) foundcmd = globals.helpcommands.user.filter(findcmd); else foundcmd = foundcmd.concat(globals.helpcommands.user.filter(findcmd))
       console.log(foundcmd)
       if (!foundcmd[0]) cmderror = true
       if (cmderror) {
@@ -430,9 +430,9 @@ if (order.substring(order.indexOf("bot!") - 1, order.indexOf("bot!")) != "\\") {
       invalidflag = false
       let cmdlist
       let already = false
-      for (let x = 0; x < helpcommands.dev.length; x++) {
-        let addlist = `${helpcommands.dev[x].prefix}\n`
-        if (!order.includes("--p")) addlist += `${helpcommands.dev[x].description}\n\n`; else addlist += `\n`
+      for (let x = 0; x < globals.helpcommands.dev.length; x++) {
+        let addlist = `${globals.helpcommands.dev[x].prefix}\n`
+        if (!order.includes("--p")) addlist += `${globals.helpcommands.dev[x].description}\n\n`; else addlist += `\n`
         let totlen
         if (cmdlist) {
           totlen = addlist.length + cmdlist.length
@@ -471,9 +471,9 @@ if (order.substring(order.indexOf("bot!") - 1, order.indexOf("bot!")) != "\\") {
     invalidflag = false
     let cmdlist
     let already = false
-    for (let x = 0; x < helpcommands.user.length; x++) {
-      let addlist = `${helpcommands.user[x].prefix}\n`
-      if (!order.includes("--p")) addlist += `${helpcommands.user[x].description}\n\n`; else addlist += `\n`
+    for (let x = 0; x < globals.helpcommands.user.length; x++) {
+      let addlist = `${globals.helpcommands.user[x].prefix}\n`
+      if (!order.includes("--p")) addlist += `${globals.helpcommands.user[x].description}\n\n`; else addlist += `\n`
       let totlen
       if (cmdlist) {
         totlen = addlist.length + cmdlist.length
@@ -618,23 +618,23 @@ if (order.substring(order.indexOf("bot!") - 1, order.indexOf("bot!")) != "\\") {
       if (message.author.id == 307335427331850242) {
       if (parseInt(plink.substring(0, 1), 10) < 5) {
       async function playp(con, mes) {
-        let info = await ytdl.getInfo(cserverp.queue[0])
+        let info = await ytdl.getInfo(globals.cserverp.queue[0])
         let firstsong = info.title
-        stream = ytdl(cserverp.queue[0], { quality:"highestaudio", filter: "audioonly"})
+        stream = ytdl(globals.cserverp.queue[0], { quality:"highestaudio", filter: "audioonly"})
         globals.pmusic.push(message.guild.id)
         globals.pmusic2.push(message.guild.id)
         const musicplay = stream.pipe(god.createWriteStream(`temp/${temp}`)).on("close", async function() {
         if (globals.showsongs.includes(message.guild.id)) message.channel.send(`Now playing "${firstsong}"...`)
-        cserverp.dispatcher = con.play(god.createReadStream(`temp/${temp}`))
-        cserverp.queue.shift()
-        cserverp.dispatcher.on("finish", function(){
+        globals.cserverp.dispatcher = con.play(god.createReadStream(`temp/${temp}`))
+        globals.cserverp.queue.shift()
+        globals.cserverp.dispatcher.on("finish", function(){
           globals.pmusic = globals.pmusic.filter(sameserver)
           globals.pmusic2 = globals.pmusic2.filter(sameserver)
-          if(cserverp.queue[0]){
+          if(globals.cserverp.queue[0]){
             playp(con, mes)
           } else {
             globals.playingpriv = false
-            privqueue = 0
+            globals.privqueue = 0
             message.channel.send(`No songs left to play, now disconecting...`)
             con.disconnect()
           }
@@ -643,8 +643,8 @@ if (order.substring(order.indexOf("bot!") - 1, order.indexOf("bot!")) != "\\") {
       }
       if (!globals.playingpriv) {
         if (!message.member.voice.channel) return message.channel.send(`Master, enter a voice channel first.`);
-        privqueue = `queue${plink}`
-        if (globals.plist[privqueue].queue[0]) cserverp = JSON.parse(JSON.stringify(globals.plist[privqueue])); else return message.channel.send("Master, this playlist is empty.")
+        globals.privqueue = `queue${plink}`
+        if (globals.plist[globals.privqueue].queue[0]) globals.cserverp = JSON.parse(JSON.stringify(globals.plist[globals.privqueue])); else return message.channel.send("Master, this playlist is empty.")
         globals.playingpriv = true
       } else {
         return message.channel.send(`Master, I'm already playing songs on this server...`)
@@ -716,7 +716,7 @@ if (order.substring(order.indexOf("bot!") - 1, order.indexOf("bot!")) != "\\") {
     }
     } else {
      if (globals.playingpriv && message.author.id == 307335427331850242) {
-       let cserver = cserverp
+       let cserver = globals.cserverp
        let queuenames = []
        for (let x = 0; x < cserver.queue.length; x++) {
          let info = ytdl.getInfo(cserver.queue[x])
@@ -749,7 +749,7 @@ if (order.substring(order.indexOf("bot!") - 1, order.indexOf("bot!")) != "\\") {
        let cserver = globals.queueservers[message.guild.id]
        let queuenames = []
        for (let x = 0; x < cserver.queue.length; x++) {
-         info = ytdl.getInfo(cserver.queue[x])
+         info = await ytdl.getInfo(cserver.queue[x])
          let namesong = info.title
          queuenames.push(namesong)
        }
@@ -800,7 +800,7 @@ if (order.substring(order.indexOf("bot!") - 1, order.indexOf("bot!")) != "\\") {
     } else {
       if (message.member.voice.channel) {
       if (globals.playingpriv && message.author.id == 307335427331850242) {
-        cserver = cserverp
+        cserver = globals.cserverp
       } else {
         cserver = globals.queueservers[message.guild.id]
       }
@@ -826,7 +826,7 @@ if (order.substring(order.indexOf("bot!") - 1, order.indexOf("bot!")) != "\\") {
     if (globals.pmusic.includes(message.guild.id)) {
       if (message.member.voice.channel) {
         if (globals.playingpriv && message.author.id == 307335427331850242) {
-          cserver = cserverp
+          cserver = globals.cserverp
         } else {
           cserver = globals.queueservers[message.guild.id]
         }
@@ -951,10 +951,10 @@ if (order.substring(order.indexOf("bot!") - 1, order.indexOf("bot!")) != "\\") {
     if (order.includes("time")) {
      if (message.author.id == 307335427331850242) {
       checktime()
-        message.channel.send(`Master ${author}, it's now ${currentTime} for me.`)
+        message.channel.send(`Master ${author}, it's now ${globals.currentTime} for me.`)
      } else {
          checktime()
-         message.channel.send(`${author}, it's now ${currentTime} for me.`)
+         message.channel.send(`${author}, it's now ${globals.currentTime} for me.`)
      }
 
   } else {
@@ -962,10 +962,10 @@ if (order.substring(order.indexOf("bot!") - 1, order.indexOf("bot!")) != "\\") {
     if (order.includes("alarm")) {
       if (order.includes("--g")) {
         if (message.author.id == 307335427331850242) {
-         special = args.substring(args.indexOf("--g") + 3)
-         if (special.substring(0, 1) == " ") special = special.substring(1)
-         god.writeFile("data/special", special, function (error) {})
-         message.channel.send(`I've set the default alarm message to "${special}", master.`)
+         globals.special = args.substring(args.indexOf("--g") + 3)
+         if (globals.special.substring(0, 1) == " ") globals.special = globals.special.substring(1)
+         god.writeFile("data/special", globals.special, function (error) {})
+         message.channel.send(`I've set the default alarm message to "${globals.special}", master.`)
         } else {
           if (globals.trustlist.includes(message.author.id)) {
             message.channel.send(`Only my master has permission to use this flag, ${author}.`)
@@ -1009,29 +1009,29 @@ if (order.substring(order.indexOf("bot!") - 1, order.indexOf("bot!")) != "\\") {
              return
            }
            while (thour > 23) {
-             thour -= 24
+             globals.thour -= 24
            }
            if (order.includes("--msg")) {
-             timeOutMessage = order.substring(order.indexOf("--msg") + 5)
+             globals.timeOutMessage = order.substring(order.indexOf("--msg") + 5)
            } else {
-              if (!special) {
-               timeOutMessage = "Alarm"
+              if (!globals.special) {
+               globals.timeOutMessage = "Alarm"
               } else {
-               timeOutMessage = special
+               globals.timeOutMessage = globals.special
               }
            }
            if (order.includes("--min")) {
              if (order.substring(order.indexOf("--min") + 5, order.substring(order.indexOf("--min") + 6) == " ")) {
-               tmin = parseInt(order.substring(order.indexOf("--min") + 6, order.indexOf("--min") + 8), 10)
+               globals.tmin = parseInt(order.substring(order.indexOf("--min") + 6, order.indexOf("--min") + 8), 10)
              } else {
-               tmin = parseInt(order.substring(order.indexOf("--min") + 5, order.indexOf("--min") + 7), 10)
+               globals.tmin = parseInt(order.substring(order.indexOf("--min") + 5, order.indexOf("--min") + 7), 10)
              }
-             if (isNaN(tmin)) tmin = 0
-             while (tmin > 59) {
-               tmin -= 60
+             if (isNaN(globals.tmin)) globals.tmin = 0
+             while (globals.tmin > 59) {
+               globals.tmin -= 60
              }
            } else {
-             tmin = 0
+             globals.tmin = 0
            }
            if (order.includes("--y")) {
              if (order.substring(order.indexOf("--y") + 3, order.substring(order.indexOf("--y") + 4) == " ")) {
@@ -1039,10 +1039,10 @@ if (order.substring(order.indexOf("bot!") - 1, order.indexOf("bot!")) != "\\") {
              } else {
                year = parseInt(order.substring(order.indexOf("--y") + 3, order.indexOf("--y") + 7), 10)
              }
-             if (isNaN(tyear)) tyear = ana
-             if (tyear < ana) tyear = ana; else tyear = ana
+             if (isNaN(tyear)) globals.tyear = globals.ana
+             if (globals.tyear < globals.ana) globals.tyear = globals.ana; else globals.tyear = globals.ana
            } else {
-             if (tyear < ana) tyear = ana; else tyear = ana
+             if (globals.tyear < globals.ana) globals.tyear = globals.ana; else globals.tyear = globals.ana
            }
            if (order.includes("--mon")) {
              if (order.substring(order.indexOf("--mon") + 5, order.substring(order.indexOf("--mon") + 6) == " ")) {
@@ -1050,13 +1050,13 @@ if (order.substring(order.indexOf("bot!") - 1, order.indexOf("bot!")) != "\\") {
              } else {
              tmonth = parseInt(order.substring(order.indexOf("--mon") + 5, order.indexOf("--mon") + 7), 10)
              }
-             if (isNaN(tmonth)) tmonth = v24
-             while (tmonth > 12) {
-               tmonth -= 12
+             if (isNaN(globals.tmonth)) globals.tmonth = globals.v24
+             while (globals.tmonth > 12) {
+               globals.tmonth -= 12
              }
-             if (tyear == ana && tmonth < v24) tmonth = v24
+             if (globals.tyear == globals.ana && globals.tmonth < globals.v24) globals.tmonth = globals.v24
            } else {
-             tmonth = v24
+             globals.tmonth = globals.v24
            }
            if (order.includes("--dat")) {
              if (order.substring(order.indexOf("--dat") + 5, order.substring(order.indexOf("--dat") + 7) == " ")) {
@@ -1064,124 +1064,123 @@ if (order.substring(order.indexOf("bot!") - 1, order.indexOf("bot!")) != "\\") {
              } else {
               tdate = parseInt(order.substring(order.indexOf("--dat") + 5, order.indexOf("--dat") + 7), 10)
              }
-             if (!isNaN(tdate)) {
-               if (tmonth == 1 || tmonth == 3 || tmonth == 5 || tmonth == 7 || tmonth == 8 || tmonth == 10 || tmonth == 12) {
-                 while (tdate > 31) {
-                   tdate -= 31
+             if (!isNaN(globals.tdate)) {
+               if (globals.tmonth == 1 || globals.tmonth == 3 || globals.tmonth == 5 || globals.tmonth == 7 || globals.tmonth == 8 || globals.tmonth == 10 || globals.tmonth == 12) {
+                 while (globals.tdate > 31) {
+                   globals.tdate -= 31
                  }
                } else {
-                  if (tmonth == 2 && bi6to) {
-                    while (tdate > 29) {
-                      tdate -= 29
+                  if (globals.tmonth == 2 && globals.bi6to) {
+                    while (globals.tdate > 29) {
+                      globals.tdate -= 29
                     }
                   } else {
-                    if (tmonth == 2) {
-                      while (tdate > 28) {
-                        tdate -= 28
+                    if (globals.tmonth == 2) {
+                      while (globals.tdate > 28) {
+                        globals.tdate -= 28
                       }
                     } else {
-                      while (tdate > 30) {
-                        tdate -= 30
+                      while (globals.tdate > 30) {
+                        globals.tdate -= 30
                       }
                     }
                   }
                }
              } else {
-               tdate = v23
-               if (thour < v17 || thour == v17 && tmin <= v18) {
-                 if (tmonth == 1 || tmonth == 3 || tmonth == 5 || tmonth == 7 || tmonth == 8 || tmonth == 10 || tmonth == 12) {
-                   if (tdate == 31) {
-                     if (tmonth == 12) {
-                       tyear += 1
-                       tmonth = 1
+               globals.tdate = globals.v23
+               if (globals.thour < v17 || globals.thour == globals.v17 && globals.tmin <= globals.v18) {
+                 if (globals.tmonth == 1 || globals.tmonth == 3 || globals.tmonth == 5 || globals.tmonth == 7 || globals.tmonth == 8 || globals.tmonth == 10 || globals.tmonth == 12) {
+                   if (globals.tdate == 31) {
+                     if (globals.tmonth == 12) {
+                       globals.tyear += 1
+                       globals.tmonth = 1
                      } else {
-                       tmonth += 1
+                       globals.tmonth += 1
                      }
-                     tdate = 1
+                     globals.tdate = 1
                     } else {
-                      tdate += 1
+                      globals.tdate += 1
                     }
                  } else {
-                     if (tmonth == 2) {
-                       if (bi6to && tdate == 29 || !bi6to && tdate == 28) {
-                         tmonth += 1
-                         tdate = 1
+                     if (globals.tmonth == 2) {
+                       if (globals.bi6to && globals.tdate == 29 || !globals.bi6to && globals.tdate == 28) {
+                         globals.tmonth += 1
+                         globals.tdate = 1
                         }
                      } else {
-                       if (tdate == 30) {
-                         tmonth += 1
-                         tdate = 1
+                       if (globals.tdate == 30) {
+                         globals.tmonth += 1
+                         globals.tdate = 1
                         } else {
-                          tdate += 1
+                          globals.tdate += 1
                         }
                      }
                  }
                }
              }
            } else {
-             tdate = v23
-             if (thour < v17 || thour == v17 && tmin <= v18) {
+             globals.tdate = globals.v23
+             if (globals.thour < globals.v17 || globals.thour == globals.v17 && globals.tmin <= globals.v18) {
                console.log("ok")
-               if (tmonth == 1 || tmonth == 3 || tmonth == 5 || tmonth == 7 || tmonth == 8 || tmonth == 10 || tmonth == 12) {
-                 if (tdate == 31) {
-                   if (tmonth == 12) {
-                     tyear += 1
-                     tmonth = 1
+               if (globals.tmonth == 1 || globals.tmonth == 3 || globals.tmonth == 5 || globals.tmonth == 7 || globals.tmonth == 8 || globals.tmonth == 10 || globals.tmonth == 12) {
+                 if (globals.tdate == 31) {
+                   if (globals.tmonth == 12) {
+                     globals.tyear += 1
+                     globals.tmonth = 1
                    } else {
-                     tmonth += 1
+                     globals.tmonth += 1
                    }
-                   tdate = 1
+                   globals.tdate = 1
                  } else {
-                   tdate += 1
+                   globals.tdate += 1
                  }
                } else {
-                   if (tmonth == 2) {
-                     if (bi6to && tdate == 29 || !bi6to && tdate == 28) {
-                       tmonth += 1
-                       tdate = 1
+                   if (globals.tmonth == 2) {
+                     if (globals.bi6to && globals.tdate == 29 || !globals.bi6to && globals.tdate == 28) {
+                       globals.tmonth += 1
+                       globals.tdate = 1
                       } else {
-                        tdate += 1
+                        globals.tdate += 1
                       }
                    } else {
-                     if (tdate == 30) {
-                       tmonth += 1
-                       tdate = 1
+                     if (globals.tdate == 30) {
+                       globals.tmonth += 1
+                       globals.tdate = 1
                       } else {
-                        tdate += 1
+                        globals.tdate += 1
                       }
                    }
                }
              }
            }
-           amessage = message.channel
-           console.log(amessage)
-           alarm = true
-           if (tmin < 10) {
+           globals.amessage = message.channel
+           globals.alarm = true
+           if (globals.tmin < 10) {
              if (message.author.id == 307335427331850242) {
                if (order.includes("--dm")) {
-                  message.guild.member("307335427331850242").send(`I will say "${timeOutMessage}" at ${tmonth}/${tdate}/${tyear}, ${thour}:0${tmin}, in the channel ${amessage} of the server "${message.guild}"; master.`)
+                  message.guild.member("307335427331850242").send(`I will say "${globals.timeOutMessage}" at ${globals.tmonth}/${globals.tdate}/${globals.tyear}, ${globals.thour}:0${globals.tmin}, in the channel ${globals.amessage} of the server "${message.guild}"; master.`)
                 } else {
-                  message.channel.send(`I will say "${timeOutMessage}" at ${tmonth}/${tdate}/${tyear}, ${thour}:0${tmin}, in the channel ${amessage} of the server "${message.guild}"; master.`)
+                  message.channel.send(`I will say "${globals.timeOutMessage}" at ${globals.tmonth}/${globals.tdate}/${globals.tyear}, ${globals.thour}:0${globals.tmin}, in the channel ${globals.amessage} of the server "${message.guild}"; master.`)
                }
              } else {
                if (order.includes("--dm")) {
-                  message.guild.member(message.author.id).send(`I will say "${timeOutMessage}" at ${tmonth}/${tdate}/${tyear}, ${thour}:0${tmin}, in the channel ${amessage} of the server "${message.guild}"; ${author}.`)
+                  message.guild.member(message.author.id).send(`I will say "${globals.timeOutMessage}" at ${globals.tmonth}/${globals.tdate}/${globals.tyear}, ${globals.thour}:0${globals.tmin}, in the channel ${globals.amessage} of the server "${message.guild}"; ${author}.`)
                 } else {
-                  message.channel.send(`I will say "${timeOutMessage}" at ${tmonth}/${tdate}/${tyear}, ${thour}:0${tmin}, in the channel ${amessage} of the server "${message.guild}""; ${author}.`)
+                  message.channel.send(`I will say "${globals.timeOutMessage}" at ${globals.tmonth}/${globals.tdate}/${globals.tyear}, ${globals.thour}:0${globals.tmin}, in the channel ${globals.amessage} of the server "${message.guild}""; ${author}.`)
                }
              }
            } else {
              if (message.author.id == 307335427331850242) {
                if (order.includes("--dm")) {
-                  message.guild.member("307335427331850242").send(`I will say "${timeOutMessage}" at ${tmonth}/${tdate}/${tyear}, ${thour}:${tmin}, in the channel ${amessage} of the server ${message.guild}; master.`)
+                  message.guild.member("307335427331850242").send(`I will say "${globals.timeOutMessage}" at ${globals.tmonth}/${globals.tdate}/${globals.tyear}, ${globals.thour}:${globals.tmin}, in the channel ${globals.amessage} of the server ${message.guild}; master.`)
                } else {
-                  message.channel.send(`I will say "${timeOutMessage}" at ${tmonth}/${tdate}/${tyear}, ${thour}:${tmin}, in the channel ${amessage} of the server ${message.guild}; master.`)
+                  message.channel.send(`I will say "${globals.timeOutMessage}" at ${globals.tmonth}/${globals.tdate}/${globals.tyear}, ${globals.thour}:${globals.tmin}, in the channel ${globals.amessage} of the server ${message.guild}; master.`)
                }
              } else {
                if (order.includes("--dm")) {
-                  message.guild.member("307335427331850242").send(`I will say "${timeOutMessage}" at ${tmonth}/${tdate}/${tyear}, ${thour}:${tmin}, in the channel ${amessage} of the server ${message.guild}; ${author}.`)
+                  message.guild.member("307335427331850242").send(`I will say "${globals.timeOutMessage}" at ${globals.tmonth}/${globals.tdate}/${globals.tyear}, ${globals.thour}:${globals.tmin}, in the channel ${globals.amessage} of the server ${message.guild}; ${author}.`)
                 } else {
-                  message.channel.send(`I will say "${timeOutMessage}" at ${tmonth}/${tdate}/${tyear}, ${thour}:${tmin}, in the channel ${amessage} of the server ${message.guild}; ${author}.`)
+                  message.channel.send(`I will say "${globals.timeOutMessage}" at ${globals.tmonth}/${globals.tdate}/${globals.tyear}, ${globals.thour}:${globals.tmin}, in the channel ${globals.amessage} of the server ${message.guild}; ${author}.`)
                }
              }
            }

@@ -22,7 +22,7 @@ module.exports = function(args) {
       break
       default:
       args = args.replace(">!", ":>");
-        break;
+      break;
     }
     if (!args.includes("!a<") || !args.includes(">!")) animoji = false;
   }
