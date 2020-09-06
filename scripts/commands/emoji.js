@@ -36,6 +36,8 @@ module.exports = function(args) {
         break;
       case "chara": args = args.replace(">!", ":735892270393589870>")
         break;
+      case "shine": args = args.replace(">!", ":736390158236254219>")
+      break
       default:
        args = args.replace(">!", ":>");
        break;
@@ -43,5 +45,6 @@ module.exports = function(args) {
     if (!args.includes("!<") || !args.includes(">!")) emoji = false;
   }
 
+  //returned data
   return args
 }

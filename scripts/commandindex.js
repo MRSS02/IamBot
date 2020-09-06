@@ -3,361 +3,57 @@ const Discord = require("discord.js");
 const ytdl = require("ytdl-core")
 const ytsr = require("ytsr")
 const commands = {
-  emoji: require('./commands/emoji.js')
+  setupcommands: require('./commands/setupcommands.js'),
+  emoji: require('./commands/emoji.js'),
+  download: require('./commands/download.js'),
+  dm: require('./commands/dm.js'),
+  evaluate: require('./commands/evaluate.js'),
 }
 
 module.exports = function(client, message, globals, checktime) {
 
+function sameserver(id) {
+  if (id != message.guild.id) return id
+}
+
+//declare vardata
 let vardata
+
+//async function where the commands are interpreted
 async function wait() {
 try {
 
 if (message.webhookID && message.content.includes("How do you feel being surpassed by me, <@!735574382096679052>?")) {
- const m = message.channel.send("Could you leave me alone, <@!159985870458322944>?");
-return
+ message.channel.send("Could you leave me alone, <@!159985870458322944>?");
+ return
 }
 
+if (message.author.bot) return;
 if (!globals.blocklist.includes(message.author.id)) {
 
-  if (message.author.bot) return;
-  let args = message.content
-  let order = args.toLowerCase();
-  if (args.includes("!a<") && args.includes(">!") || args.includes("!<") && args.includes(">!")) args = commands.emoji(args)
-
-  const fchar = parseInt(args.substring(0, 18), 10)
-  let play
-  if (order.includes("play")) link = args.substring(order.indexOf("play") + 4)
-  let author
-
-if (order.includes("!$d")) {
-  if (order.substring(order.indexOf("!$d") - 1, order.indexOf("!$d")) != "\\") {
-  message.delete()
-  }
+//setup
+let setupcommandsreturned = commands.setupcommands(message, globals)
+let play
+let link = setupcommandsreturned.link
+let args = setupcommandsreturned.args
+let order = setupcommandsreturned.order
+let author = setupcommandsreturned.author
+let owner = setupcommandsreturned.owner
+const fchar = setupcommandsreturned.fchar
+for (var item in setupcommandsreturned.globals) {
+  globals[item] = setupcommandsreturned.globals[item]
 }
 
-if (message.channel.type !== "dm") {
-try {
-if (message.guild.member(message.author).nickname == null) {
-   author = message.author.username
-} else {
-   author = message.guild.member(message.author).nickname
-}
-} catch (error) {
-  author = message.author.username
+//non-"bot!" commands
+if (args.includes("!a<") && args.includes(">!") || args.includes("!<") && args.includes(">!")) args = commands.emoji(args)
+if (order.includes("!%d") && message.author.id == 307335427331850242 && message.channel.type === "dm") commands.download(order, args, ytdl, god, message)
+if (message.channel.type === "dm") commands.dm(fchar, args, message, client)
+let evalreturned = commands.evaluate(play, link, order, args, author, owner, fchar, message, client, Discord, globals)
+for (var item in evalreturned.globals) {
+  globals[item] = evalreturned.globals[item]
 }
 
-try {
-if (message.guild.member("307335427331850242").nickname == null) {
-   owner = message.guild.member("307335427331850242").username
-} else {
-   owner = message.guild.member("307335427331850242").nickname
-}
-} catch (error) {
-  owner = message.guild.member("307335427331850242").username
-}
-}
-
-function sameserver(id) {
-    if (id != message.guild.id) return id
-}
-
-  if (order.includes("--hide") && globals.trustlist.includes(message.author.id) || order.includes("--hide") && message.author.id == 307335427331850242) {
-    globals.showsongs = globals.showsongs.filter(sameserver)
-
-  } else {
-
-  if (order.includes("--show") && globals.trustlist.includes(message.author.id) || order.includes("--show") && message.author.id == 307335427331850242) {
-    globals.showsongs.push(message.guild.id)
-
-  }
-  }
-
-if (order.includes("!%d") && message.author.id == 307335427331850242 && message.channel.type === "dm") {
-  if (order.substring(order.indexOf("!%d") - 1, order.indexOf("!%d")) != "\\") {
-  let stream
-  async function download(file, filename) {
-    message.channel.send("Downloading...")
-    let extension
-    if (order.includes("--haudio")) {
-      stream = ytdl(file, { quality: "highestaudio", filter: "audioonly"})
-      extension = ".mp3"
-    } else {
-      if (order.includes("--audio")) {
-        stream = ytdl(file, { filter: "audioonly"})
-        extension = ".mp3"
-      } else {
-        if (order.includes("--hvideo")) {
-          stream = ytdl(file, { quality: "highestvideo"})
-          extension = ".mp4"
-        } else {
-          stream = ytdl(file)
-          extension = ".mp4"
-        }
-      }
-    }
-    god.access(`downloads/${filename}${extension}`, god.constants.R_OK, async (error) => {
-    if (error) {
-    await stream.pipe(god.createWriteStream(`downloads/${filename}${extension}`)).on("close", function() {
-      message.channel.send("File downloaded.")
-    })
-    } else {
-      message.channel.send(`A file named "${filename}${extension}" already exists, master.`)
-    }
-    })
-  }
-  if (order.includes("::")) {
-  let link = args.substring(order.indexOf("!%d") + 3, order.indexOf("::"))
-  let filename = args.substring(order.indexOf("::") + 2)
-  link = link.replace(/ /g, "")
-  checkvalid = ytdl.validateURL(link);
-   if (checkvalid) {
-     download(link, filename)
-   } else {
-    message.channel.send(`Master, "${link}" is not a valid youtube video link.`)
-   }
-  } else {
-   message.channel.send(`Master, tell me the name of the output file.`)
- }
-}
-}
-
-if (message.channel.type === "dm") {
-  const id = args.substring(0, 18)
-  const emb = new Discord.MessageEmbed()
-  let dm = args.substring(18)
-  if (dm.includes("%%")) {
-     let hexcol
-     let c
-     if (message.author.id == 307335427331850242) {
-       if (dm.includes("%%%")) {
-         hexcol = dm.substring(dm.indexOf("%%%"), dm.indexOf("%%%") + 9)
-         const d = dm.substring(dm.indexOf("%%%"), dm.indexOf("%%%") + 9)
-         c = dm.replace(d, '')
-         hexcol = hexcol.substring(3)
-       } else {
-         c = args.replace("%%", '')
-         hexcol = "00aaff"
-       }
-       if (order.includes("/")) {
-       msg1 = c.substring(0, c.indexOf("/"))
-       msg2 = c.replace(msg1, '')
-       msg2 = msg2.substring(1)
-       if (msg2.substring(0, 1) == " ") msg2 = msg2.substring(1)
-       } else {
-       msg1 = c
-       msg2 = "\u200b"
-       }
-       const emb = new Discord.MessageEmbed()
-       .setColor(hexcol)
-       .addFields(
-       { name: msg1, value: msg2, inline: true},
-       )
-       dm = emb
-     }
-   }
-   if (message.author.id == 307335427331850242 && !isNaN(fchar)) {
-    client.users.cache.get(id).send(dm).catch(error =>{
-      message.author.send(`I couldn't send "${dm}" to ${id}.`)
-    })
-
-   } else {
-   if (message.author.bot) return;
-   if (message.author.id != 307335427331850242) client.users.cache.get("307335427331850242").send("```js\n" + `${message.author.username}, ID: ${message.author.id}\n` + "```\n" + args)
-   }
-}
-
-if (order.includes(":::")) {
-if (order.substring(order.indexOf(":::") - 1, order.indexOf(":::")) != "\\") {
-  if (message.author.id == 307335427331850242) {
-    let ev = args.substring(args.indexOf(":::") + 3)
-    function say(a){
-      message.channel.send(a)
-    }
-    function dm(a){
-      if (message.channel.type === "dm") client.users.cache.get("307335427331850242").send(a); else message.guild.member("307335427331850242").send(a)
-    }
-    try {
-     eval(ev)
-    } catch (error) {
-       if (message.channel.type === "dm") client.users.cache.get("307335427331850242").send(`${error}`); else message.guild.member("307335427331850242").send(`${error}`)
-    }
-
-  } else {
-      message.channel.send(`You're not my master, ${author}.`)
-  }
-}
-} else {
-
-if (order.includes("ccc")) {
-if (order.substring(order.indexOf("ccc") - 1, order.indexOf("ccc")) != "\\") {
-  let c = args.replace('ccc','')
-  if (message.author.id == 307335427331850242) {
-      message.delete()
-      if (c.substring(0, 1) == "!") c = c.substring(1)
-      message.channel.send(c)
-  } else {
-    if (globals.trustlist.includes(message.author.id)) {
-      message.delete()
-      if (c.substring(0, 1) == "!") c = c.substring(1)
-      if (c.substring(0,1) == " ") c = c.substring(1)
-      message.channel.send(`${author} told me to say:\n"${c}."`)
-    } else {
-     message.channel.send(`You're not my master, ${author}.`)
-    }
-  }
-}
-} else {
-
- if (order.includes("%%")) {
-   if (order.substring(order.indexOf("%%") - 1, order.indexOf("%%")) != "\\") {
-     let hexcol
-     let c
-     if (message.author.id == 307335427331850242 || globals.trustlist.includes(message.author.id)) {
-       message.delete()
-       const emb = new Discord.MessageEmbed()
-       c = args.replace("%%", '')
-       if (order.includes("--c")) {
-         let chkspace = c.substring(c.indexOf("--c") + 3, c.indexOf("--c") + 4)
-         let d
-         if (chkspace == " ") {
-           hexcol = c.substring(c.indexOf("--c") + 4, c.indexOf("--c") + 10)
-           d = c.substring(c.indexOf("--c"), c.indexOf("--c") + 10)
-        } else {
-          hexcol = c.substring(c.indexOf("--c") + 3, c.indexOf("--c") + 9)
-          d = c.substring(c.indexOf("--c"), c.indexOf("--c") + 9)
-        }
-        c = c.replace(d, '')
-       } else {
-         hexcol = "00ffff"
-       }
-       emb.setColor(hexcol)
-       if (!order.includes("--t")) {
-        if (c.includes("--d")) c = c.replace("--d", "")
-        emb.setDescription(c)
-       } else {
-       c = c.replace("--t", "")
-       if (order.includes("--d")) {
-       msg1 = c.substring(0, c.indexOf("--d"))
-       msg2 = c.replace(msg1, '')
-       msg2 = msg2.substring(3)
-       if (msg2.replace(/ /g, "") == "") msg2 = "\u200b"
-       if (msg2.substring(0, 1) == " ") msg2 = msg2.substring(1)
-       } else {
-       msg1 = c
-       msg2 = "\u200b"
-       }
-       emb.addFields(
-       { name: msg1, value: msg2, inline: true},
-       )
-       }
-       if (message.author.id != 307335427331850242) emb.setTitle(`${author} told me to say`)
-       if (message.channel.type === "dm") return
-       message.channel.send(emb)
-
-   } else {
-       message.channel.send(`You're not my master, ${author}.`)
-   }
-   }
-
-
- } else {
-
-   if (order.includes("!$bye")) {
-     if (order.substring(order.indexOf("!$bye") - 1, order.indexOf("!$bye")) != "\\") {
-     if (message.member.hasPermission("BAN_MEMBERS")) {
-     message.delete()
-     let reasonExists
-     let reason
-     if (order.includes("--r")) {
-       reasonExists = true
-       reason = args.substring(order.indexOf("--r") + 3)
-       if (reason.substring(0, 1) == " ") reason = reason.substring(1)
-     } else {
-       reasonExists = false
-     }
-     let a = args.substring(order.indexOf("!$bye") + 5)
-      if (reasonExists) {
-       a = a.replace(reason, "")
-       a = a.replace("--r", "")
-     }
-      a = a.replace("<@!", "")
-      a = a.replace(">", "")
-     a = a.replace(/ /g, "")
-      console.log(a)
-      b = message.guild.member(a)
-     d = message.guild
-          if (message.guild.member(a).nickname == null) {
-            c = message.guild.member(a).user.username
-          } else {
-            c = message.guild.member(a).nickname
-          }
-    if (reasonExists) {
-      client.users.cache.get(a).send(`https://cdn.discordapp.com/attachments/635571665861869605/729017344432537630/video0.mp4\n ${c}, you were banned from "${d}".\nReasom for the ban:"${reason}".`).then(() => {
-            message.guild.member(a).ban({ reason: reason }).then(() =>{
-        message.channel.send(`${b}\n https://cdn.discordapp.com/attachments/635571665861869605/729017344432537630/video0.mp4`)
-               message.channel.send(`"${c}" was banned from this server.`)
-               }).catch(error =>{
-               message.channel.send(`I couldn't ban that user.`)
-               })
-      }).catch(error => {
-             message.channel.send(`${b}\n https://cdn.discordapp.com/attachments/635571665861869605/729017344432537630/video0.mp4`)
-      setTimeout(function(){
-           message.guild.member(a).ban({ reason: reason }).then(() =>{
-                message.channel.send(`"${c}" was banned from this server.`)
-                }).catch(error =>{
-                message.channel.send(`I couldn't ban that user.`)
-                })
-        }, 14000)
-          })
-      } else {
-       client.users.cache.get(a).send(`https://cdn.discordapp.com/attachments/635571665861869605/729017344432537630/video0.mp4\n ${c}, you were banned from "${d}".`).then(() => {
-            message.guild.member(a).ban().then(() =>{
-        message.channel.send(`${b}\n https://cdn.discordapp.com/attachments/635571665861869605/729017344432537630/video0.mp4`)
-               message.channel.send(`"${c}" was banned from this server.`)
-               }).catch(error =>{
-               message.channel.send(`I couldn't ban that user.`)
-               })
-      }).catch(error => {
-             message.channel.send(`${b}\n https://cdn.discordapp.com/attachments/635571665861869605/729017344432537630/video0.mp4`)
-      setTimeout(function(){
-           message.guild.member(a).ban().then(() =>{
-                message.channel.send(`"${c}" was banned from this server.`)
-                }).catch(error =>{
-                message.channel.send(`I couldn't ban that user.`)
-                })
-        }, 14000)
-          })
-    }
-  } else {
-    message.channel.send(`You're not allowed to ask me for that, ${author}.`)
-  }
-  }
-
-} else {
-
-  if (order.includes("!$a")) {
-   if (message.author.id == 307335427331850242) {
-    let path = args.substring(order.indexOf(`!$a`) + 3)
-    if (path.substring(0, 1) == " ") path = path.substring(1)
-    god.access(`./downloads/${path}`, god.F_OK, (error) => {
-     if (error) return message.channel.send(`Master, I couldn't find that file.`)
-     try {
-     const attachment = new Discord.MessageAttachment(`./downloads/${path}`)
-     message.channel.send(attachment)
-     } catch {
-        message.channel.send(`Master, something went wrong.`)
-     }
-   })
-   } else {
-     message.channel.send(`You're not my master, ${author}.`)
-   }
-
-}
-}
-}
-}
-}
-
+//"bot!" commands
 if (order.includes("bot!")) {
 if (order.substring(order.indexOf("bot!") - 1, order.indexOf("bot!")) != "\\") {
 
@@ -610,7 +306,7 @@ if (order.substring(order.indexOf("bot!") - 1, order.indexOf("bot!")) != "\\") {
     }
     let search = link
     let checkvalid = false
-    link = link.replace(/ /g, "")
+    link =  link.replace(/ /g, "")
     let plink
     if (!order.includes("--h")) globals.showsongs.push(message.guild.id)
     if (order.includes("--p")) {
@@ -804,6 +500,7 @@ if (order.substring(order.indexOf("bot!") - 1, order.indexOf("bot!")) != "\\") {
       } else {
         cserver = globals.queueservers[message.guild.id]
       }
+      console.log(globals.pmusic)
       globals.pmusic = globals.pmusic.filter(sameserver)
         if (cserver.dispatcher) {
         cserver.dispatcher.end()

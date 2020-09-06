@@ -1,7 +1,7 @@
 {
-  "script": "file.js",
+  "script": "main.js",
   "name": "bot",
-  "main": "file.js",
+  "main": "main.js",
   "watch": true,
   "ignore_watch": ["temp", "downloads", "data", ".gitignore"],
   "filter_env": [],

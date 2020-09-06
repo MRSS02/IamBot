@@ -2,7 +2,7 @@
   "name": "iambot",
   "version": "1.0.0",
   "description": "I am Bot",
-  "main": "file.js",
+  "main": "main.js",
   "scripts": {
     "test": "test 123"
   },
