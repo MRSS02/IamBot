@@ -31,31 +31,51 @@ return token
 }
 
 exports.trustlist = function() {
-  let trustlist = []
-  if (!god.existsSync("./data/trustlist")){
-    god.closeSync(god.openSync("./data/trustlist", 'w'));
+  let dir3 = "./data/trustlist"
+  let trustlist = {}
+  if (!god.existsSync(dir3)){
+      god.mkdirSync(dir3);
   } else {
-    readline.createInterface({
-        input: god.createReadStream("./data/trustlist"),
-        terminal: false
-    }).on('line', function(line) {
-       trustlist.push(line)
-    });
+    god.readdir(dir3, function(error, files) {
+      if (error) {
+        console.log(error)
+        return;
+      }
+      files.forEach(function(filename) {
+        trustlist[filename] = []
+        readline.createInterface({
+            input: god.createReadStream(`${dir3}/${filename}`),
+            terminal: false
+        }).on('line', function(line) {
+           trustlist[filename].push(line)
+        });
+      })
+    })
   }
   return trustlist
 }
 
 exports.blocklist = function() {
-  let blocklist = []
-  if (!god.existsSync("./data/blocklist")){
-    god.closeSync(god.openSync("./data/blocklist", 'w'));
+  let dir3 = "./data/blocklist"
+  let blocklist = {}
+  if (!god.existsSync(dir3)){
+      god.mkdirSync(dir3);
   } else {
-    readline.createInterface({
-        input: god.createReadStream("./data/blocklist"),
-        terminal: false
-    }).on('line', function(line) {
-       blocklist.push(line)
-    });
+    god.readdir(dir3, function(error, files) {
+      if (error) {
+        console.log(error)
+        return;
+      }
+      files.forEach(function(filename) {
+        blocklist[filename] = []
+        readline.createInterface({
+            input: god.createReadStream(`${dir3}/${filename}`),
+            terminal: false
+        }).on('line', function(line) {
+           blocklist[filename].push(line)
+        });
+      })
+    })
   }
   return blocklist
 }
@@ -132,6 +152,35 @@ exports.playlistmake = function() {
   return plist
 
 }
+
+exports.setserveremojis = function() {
+
+  let serveremojis = {}
+  let dir3 = "./data/serveremojis";
+  if (!god.existsSync(dir3)){
+      god.mkdirSync(dir3);
+  } else {
+    god.readdir(dir3, function(error, files) {
+      if (error) {
+        console.log(error)
+        return;
+      }
+      files.forEach(function(filename) {
+        serveremojis[filename] = []
+        readline.createInterface({
+            input: god.createReadStream(`${dir3}/${filename}`),
+            terminal: false
+        }).on('line', function(line) {
+           serveremojis[filename].push(line)
+        });
+      })
+    })
+  }
+
+  return serveremojis
+
+}
+
 
 exports.sethelp = function() {
   let helpcommands = {

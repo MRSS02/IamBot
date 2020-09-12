@@ -1,4 +1,4 @@
-module.exports = function(args) {
+module.exports = function(args, message, globals) {
   let emoji
   let animoji
   let emojiname
@@ -7,22 +7,26 @@ module.exports = function(args) {
   while (animoji) {
     let emojiname = args.substring(args.indexOf("!a<") + 3, args.indexOf(">!"))
     args = args.replace("!a<", "<a:")
+    try {
     switch (emojiname) {
-      case "mario": args = args.replace(">!", ":747274856952758283>");
+      case "mario": if (globals.serveremojis[message.guild.id].includes("mario")) args = args.replace(">!", ":747274856952758283>");
       break;
-      case "spin": args = args.replace(">!", ":747294958125580340>");
+      case "sonicwait": if (globals.serveremojis[message.guild.id].includes("sonicwait")) args = args.replace(">!", ":728778079115411507>");
       break;
-      case "sonicwait": args = args.replace(">!", ":728778079115411507>");
+      case "jevil":  if (globals.serveremojis[message.guild.id].includes("jevil")) args = args.replace(">!", ":747514177631027250>");
       break;
-      case "jevil": args = args.replace(">!", ":747514177631027250>");
+      case "avinpc": if (globals.serveremojis[message.guild.id].includes("aninpc")) args = args.replace(">!", ":747500593177690257>");
       break;
-      case "cannibal": args = args.replace(">!", ":747500593177690257>");
+      case "mighty": if (globals.serveremojis[message.guild.id].includes("mighty")) args = args.replace(">!", ":747514718318755950>");
       break;
-      case "mighty": args = args.replace(">!", ":747514718318755950>");
-      break
-      default:
-      args = args.replace(">!", ":>");
+      case "furret": if (globals.serveremojis[message.guild.id].includes("furret")) args = args.replace(">!", ":752316343293837382>")
       break;
+      case "rem": if (globals.serveremojis[message.guild.id].includes("rem")) args = args.replace(">!", ":753450005079261304>")
+      break;
+      case "ram": if (globals.serveremojis[message.guild.id].includes("ram")) args = args.replace(">!", ":753450076126576741>")
+      break;
+    }
+    } catch {
     }
     if (!args.includes("!a<") || !args.includes(">!")) animoji = false;
   }
@@ -30,17 +34,16 @@ module.exports = function(args) {
     let emojiname = args.substring(args.indexOf("!<") + 2, args.indexOf(">!"))
     args = args.replace("!<", "<:")
     switch (emojiname) {
-      case "okay": args = args.replace(">!", ":736379500555796590>")
+      case "okay": if (globals.serveremojis[message.guild.id].includes("ram")) args = args.replace(">!", ":736379500555796590>")
         break;
-      case "marth": args = args.replace(">!", ":736577172277559317>")
+      case "marth": if (globals.serveremojis[message.guild.id].includes("ram")) args = args.replace(">!", ":736577172277559317>")
         break;
-      case "chara": args = args.replace(">!", ":735892270393589870>")
+      case "chara": if (globals.serveremojis[message.guild.id].includes("ram")) args = args.replace(">!", ":735892270393589870>")
         break;
-      case "shine": args = args.replace(">!", ":736390158236254219>")
+      case "shine": if (globals.serveremojis[message.guild.id].includes("ram")) args = args.replace(">!", ":736390158236254219>")
       break
-      default:
-       args = args.replace(">!", ":>");
-       break;
+      case "squirtle": if (globals.serveremojis[message.guild.id].includes("ram")) args = args.replace(">!", ":752314132820263015>")
+      break;
     }
     if (!args.includes("!<") || !args.includes(">!")) emoji = false;
   }

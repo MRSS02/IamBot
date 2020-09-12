@@ -2,7 +2,6 @@ const Discord = require("discord.js");
 
 module.exports = function(fchar, args, message, client) {
 
-    console.log("rerfrtgfhjuyh")
     const id = args.substring(0, 18)
     const emb = new Discord.MessageEmbed()
     let dm = args.substring(18)

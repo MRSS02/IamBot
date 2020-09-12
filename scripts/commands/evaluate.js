@@ -27,12 +27,12 @@ module.exports = function(play, link, order, args, author, owner, fchar, message
     let c;
     if (args.includes("CCC")) c = args.replace("CCC", ""); else c = args.replace("ccc", "");
     if (message.author.id == 307335427331850242) {
-        message.delete()
+        message.delete().catch()
         if (c.substring(0, 1) == "!") c = c.substring(1)
         message.channel.send(c)
     } else {
-      if (globals.trustlist.includes(message.author.id)) {
-        message.delete()
+      if (globals.trustlist[message.guild.id].includes(message.author.id)) {
+        message.delete().catch()
         if (c.substring(0, 1) == "!") c = c.substring(1)
         if (c.substring(0,1) == " ") c = c.substring(1)
         message.channel.send(`${author} told me to say:\n"${c}."`)
@@ -47,8 +47,8 @@ module.exports = function(play, link, order, args, author, owner, fchar, message
      if (order.substring(order.indexOf("%%") - 1, order.indexOf("%%")) != "\\") {
        let hexcol
        let c
-       if (message.author.id == 307335427331850242 || globals.trustlist.includes(message.author.id)) {
-         message.delete()
+       if (message.author.id == 307335427331850242 || globals.trustlist[message.guild.id].includes(message.author.id)) {
+         message.delete().catch()
          const emb = new Discord.MessageEmbed()
          c = args.replace("%%", '')
          if (order.includes("--c")) {
@@ -100,7 +100,7 @@ module.exports = function(play, link, order, args, author, owner, fchar, message
      if (order.includes("!$bye")) {
        if (order.substring(order.indexOf("!$bye") - 1, order.indexOf("!$bye")) != "\\") {
        if (message.member.hasPermission("BAN_MEMBERS")) {
-       message.delete()
+       message.delete().catch()
        let reasonExists
        let reason
        if (order.includes("--r")) {

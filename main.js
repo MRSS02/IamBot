@@ -14,6 +14,7 @@ const globals = {
   special: setup.special(),
   plist: setup.playlistmake(),
   helpcommands: setup.sethelp(),
+  serveremojis: setup.setserveremojis(),
   playingpriv: false,
   privqueue: 0,
   cserverp: false,
@@ -78,7 +79,7 @@ client.on("guildDelete", guild => {
 
 //This sets the bot commands.
 client.on("message", async message => {
-let returned = await commands(client, message, globals, updatetime)
+let returned = await commands(client, message, globals, updatetime, Discord, god)
 //recover returned variable data
 for (var item in returned) {
   globals[item] = returned[item]

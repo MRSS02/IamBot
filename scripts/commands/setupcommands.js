@@ -10,7 +10,7 @@ module.exports = function(message, globals) {
 
   if (order.includes("!$d")) {
     if (order.substring(order.indexOf("!$d") - 1, order.indexOf("!$d")) != "\\") {
-    message.delete()
+    message.delete().catch()
     }
   }
 
@@ -38,12 +38,12 @@ module.exports = function(message, globals) {
   function sameserver(id) {
       if (id != message.guild.id) return id
   }
-    if (order.includes("--hide") && globals.trustlist.includes(message.author.id) || order.includes("--hide") && message.author.id == 307335427331850242) {
+    if (order.includes("--hide") && globals.trustlist[message.guild.id].includes(message.author.id) || order.includes("--hide") && message.author.id == 307335427331850242) {
       globals.showsongs = globals.showsongs.filter(sameserver)
 
     } else {
 
-    if (order.includes("--show") && globals.trustlist.includes(message.author.id) || order.includes("--show") && message.author.id == 307335427331850242) {
+    if (order.includes("--show") && globals.trustlist[message.guild.id].includes(message.author.id) || order.includes("--show") && message.author.id == 307335427331850242) {
       globals.showsongs.push(message.guild.id)
 
     }
