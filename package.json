@@ -4,8 +4,7 @@
   "description": "I am Bot",
   "main": "main.js",
   "scripts": {
-    "start": "node .",
-    "heroku-prebuild": "npm install"
+    "start": "node ."
   },
   "repository": {
     "type": "git",
