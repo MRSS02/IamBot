@@ -4,7 +4,6 @@
   "description": "I am Bot",
   "main": "main.js",
   "scripts": {
-    "prestart": "npm i"
     "start": "node ."
   },
   "repository": {
@@ -25,7 +24,6 @@
   },
   "homepage": "https://github.com/MRSS02/IamBot",
   "dependencies": {
-    "basetag": "^1.0.0",
     "discord.js": "^12.2.0",
     "ffmpeg-static": "^4.2.7",
     "opusscript": "0.0.7",
