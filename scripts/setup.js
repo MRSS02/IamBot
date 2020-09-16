@@ -18,7 +18,7 @@ if (!god.existsSync(dir2)){
 }
 function getToken() {
   try {
-     token = god.readFileSync('./data/token', 'utf8').toString();
+     token = god.readFileSync('./data/token', 'utf8').toString()
   }
   catch (error) {
     console.log(error)

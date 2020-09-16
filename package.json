@@ -4,7 +4,7 @@
   "description": "I am Bot",
   "main": "main.js",
   "scripts": {
-    "test": "test 123"
+    "start": "node ."
   },
   "repository": {
     "type": "git",
@@ -13,6 +13,10 @@
   "keywords": [
     "I am Bot"
   ],
+  "engines": {
+    "node": "12.18.3"
+  },
+
   "author": "MRSS",
   "license": "ISC",
   "bugs": {
@@ -26,6 +30,7 @@
     "opusscript": "0.0.7",
     "ytdl-core": "^3.2.0",
     "ytdl-getinfo": "^1.1.0",
-    "ytsr": "^0.1.20"
+    "ytsr": "^0.1.20",
+    "mongodb": "^3.6.2"
   }
 }

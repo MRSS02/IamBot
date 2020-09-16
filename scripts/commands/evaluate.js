@@ -27,12 +27,12 @@ module.exports = function(play, link, order, args, author, owner, fchar, message
     let c;
     if (args.includes("CCC")) c = args.replace("CCC", ""); else c = args.replace("ccc", "");
     if (message.author.id == 307335427331850242) {
-        message.delete().catch()
+        message.delete()
         if (c.substring(0, 1) == "!") c = c.substring(1)
         message.channel.send(c)
     } else {
       if (globals.trustlist[message.guild.id].includes(message.author.id)) {
-        message.delete().catch()
+        message.delete()
         if (c.substring(0, 1) == "!") c = c.substring(1)
         if (c.substring(0,1) == " ") c = c.substring(1)
         message.channel.send(`${author} told me to say:\n"${c}."`)
