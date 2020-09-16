@@ -3,6 +3,4 @@ data
 downloads
 temp
 package-lock.json
-ffmpeg.exe
-ffplay.exe
-ffprobe.exe
+nodedock
