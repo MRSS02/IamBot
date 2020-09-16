@@ -16,7 +16,6 @@
   "engines": {
     "node": "12.18.3"
   },
-
   "author": "MRSS",
   "license": "ISC",
   "bugs": {

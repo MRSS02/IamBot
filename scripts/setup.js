@@ -17,8 +17,9 @@ if (!god.existsSync(dir2)){
     god.mkdirSync(dir2);
 }
 function getToken() {
+  let tokenpath = "./data/token"
   try {
-     token = god.readFileSync('./data/token', 'utf8').toString()
+    if (god.existsSync(tokenpath)) token = god.readFileSync('./data/token', 'utf8').toString(); else token = process.env.TOKEN
   }
   catch (error) {
     console.log(error)
