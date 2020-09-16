@@ -1,5 +1,4 @@
-const Database = require('mongodb').MongoClient;
-const url = "mongodb://localhost:27017/botdb";
+
 const setup = require("./scripts/setup.js")
 const checktime = require("./scripts/checktime.js")
 const commands = require("./scripts/commandindex.js")
