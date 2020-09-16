@@ -1,4 +1,4 @@
-
+const Database = require('mongodb').MongoClient;
 const setup = require("./scripts/setup.js")
 const checktime = require("./scripts/checktime.js")
 const commands = require("./scripts/commandindex.js")
