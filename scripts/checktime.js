@@ -1,4 +1,15 @@
-module.exports = async function checktime(tmin, thour, tdate, tmonth, tyear, timeOutMessage, amessage, v17, v18, v23, v24, ana, bi6to, alarm, currentTime) {
+module.exports = async function checktime(globals) {
+
+  //define variables
+  tmin = globals.tmin
+  thour = globals.thour
+  tdate = globals.tdate
+  tmonth = globals.tmonth
+  tyear = globals.tyear
+  timeOutMessage = globals.timeOutMessage,
+  amessage = globals.amessage
+  alarm = globals.alarm
+
   let horario = Date.now()
   let harario = Math.floor(horario * Math.pow(86400000, -1))
   let hirario = harario * 86400000
@@ -197,9 +208,7 @@ if (bi6to) {
 
 //return variable data
   let vardata = {
-    tmin: tmin, thour: thour, tdate: tdate,
-    tmonth: tmonth, tyear: tyear, timeOutMessage: timeOutMessage,
-    amessage: amessage, v17: v17, v18: v18,
+    v17: v17, v18: v18,
     v23: v23, v24: v24, ana: ana,
     bi6to: bi6to, alarm: alarm, currentTime: currentTime
   }
