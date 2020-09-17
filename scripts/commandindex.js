@@ -9,7 +9,7 @@ const commands = {
   botprefix: require('./commands/botprefixindex.js')
 }
 
-module.exports = function(client, message, globals, checktime, Discord, god) {
+module.exports = function(client, message, globals, checktime, Discord, Database, god) {
 
 function sameserver(id) {
   if (id != message.guild.id) return id

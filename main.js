@@ -1,4 +1,3 @@
-const Database = require('mongodb').MongoClient;
 const setup = require("./scripts/setup.js")
 const checktime = require("./scripts/checktime.js")
 const commands = require("./scripts/commandindex.js")
@@ -10,6 +9,7 @@ const readline = require('readline');
 //Setting up the bot
 const token = setup.startup()
 const globals = {
+  dblogin: setup.setDB(),
   trustlist: setup.trustlist(),
   blocklist: setup.blocklist(),
   special: setup.special(),
@@ -41,7 +41,16 @@ const globals = {
   alarm: false,
   currentTime: false
 }
-
+const setdb = require('mongodb').MongoClient;
+const Database = new setdb(globals.dblogin, { useUnifiedTopology: true })
+Database.connect((error, db) => {
+  let dbo = db.db("teste0")
+  dbo.collection("teste1").findOne({}, function(err, result) {
+    if (err) throw err;
+    console.log(result.name);
+    db.close();
+  });
+})
 async function changeStatus() {
   let returnedStatus = setup.changeStatus(globals, client)
   globals.statusBot = returnedStatus
@@ -80,7 +89,8 @@ client.on("guildDelete", guild => {
 
 //This sets the bot commands.
 client.on("message", async message => {
-let returned = await commands(client, message, globals, updatetime, Discord, god)
+let returned = await commands(client, message, globals,
+updatetime, Discord, Database, god)
 //recover returned variable data
 for (var item in returned) {
   globals[item] = returned[item]

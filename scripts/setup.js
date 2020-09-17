@@ -28,7 +28,13 @@ function getToken() {
 getToken()
 
 return token
+}
 
+exports.setDB = function() {
+  let dblogin
+  let path = "./data/dblogin"
+  if (god.existsSync(path)) dblogin = god.readFileSync('./data/dblogin', 'utf8').toString(); else dblogin = process.env.DBLOGIN
+  return dblogin
 }
 
 exports.trustlist = function() {
