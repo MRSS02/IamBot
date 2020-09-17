@@ -43,7 +43,7 @@ const globals = {
 }
 const setdb = require('mongodb').MongoClient;
 const Database = new setdb(globals.dblogin, { useUnifiedTopology: true })
-Database.connect((error, db) => {
+Database.connect((error, db) => { 
   let dbo = db.db("teste0")
   dbo.collection("teste1").findOne({}, function(err, result) {
     if (err) throw err;
