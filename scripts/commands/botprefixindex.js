@@ -105,6 +105,7 @@ if (order.includes("status")) {
   if (order.includes("alarm")) {
     if (order.includes("--g")) {
       if (message.author.id == 307335427331850242) {
+        message.channel.send("oi eu tô aqui zorra")
        globals.special = args.substring(args.indexOf("--g") + 3)
        if (globals.special.substring(0, 1) == " ") globals.special = globals.special.substring(1)
        god.writeFile("data/special", globals.special, function (error) {})
@@ -117,10 +118,11 @@ if (order.includes("status")) {
         }
       }
     } else {
+
     if (message.author.id == 307335427331850242 || globals.trustlist[message.guild.id].includes(message.author.id)) {
      if (order.includes("--del")) {
-       if (alarm) {
-       alarm = false
+       if (globals.alarm) {
+       globals.alarm = false
        if (message.author.id == 307335427331850242) {
          message.channel.send("I erased the previously set alarm, master.")
        } else {
@@ -134,16 +136,16 @@ if (order.includes("status")) {
          }
        }
      } else {
-      if (alarm) {
+      if (globals.alarm) {
         message.channel.send(`An alarm is already set, master.`)
       } else {
        if (order.includes("--h")) {
          if (order.substring(order.indexOf("--h") + 3, order.substring(order.indexOf("--h") + 4) == " ")) {
-           thour = parseInt(order.substring(order.indexOf("--h") + 4, order.indexOf("--h") + 6), 10)
+           globals.thour = parseInt(order.substring(order.indexOf("--h") + 4, order.indexOf("--h") + 6), 10)
          } else {
-           thour = parseInt(order.substring(order.indexOf("--h") + 3, order.indexOf("--h") + 5), 10)
+           globals.thour = parseInt(order.substring(order.indexOf("--h") + 3, order.indexOf("--h") + 5), 10)
          }
-         if (isNaN(thour)) {
+         if (isNaN(globals.thour)) {
            if (message.author.id == 307335427331850242) {
                message.channel.send(`The hour you told me to say the alarm is invalid, master.`)
            } else {
@@ -151,7 +153,7 @@ if (order.includes("status")) {
            }
            return
          }
-         while (thour > 23) {
+         while (globals.thour > 23) {
            globals.thour -= 24
          }
          if (order.includes("--msg")) {
