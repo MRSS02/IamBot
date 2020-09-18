@@ -1,7 +1,8 @@
 const botprefix = {
   help: require("./botprefix/help.js"),
   music: require("./botprefix/music.js"),
-  intro: require("./botprefix/intro.js")
+  intro: require("./botprefix/intro.js"),
+  status: require("./botprefix/status.js")
 }
 
 module.exports = function(play, link, order, args, author, owner,
@@ -28,42 +29,7 @@ for (var item in musicreturned.globals) {
 
 if (order.includes("intro")) botprefix.intro(Discord, args, message); else {
 
-if (order.includes("status")) {
-
-  if (message.author.id == 307335427331850242) {
-    const sub1 = args.substring(order.indexOf("status") + 6)
-    if (sub1.toLowerCase().includes("--l")) {
-       manualStatus = true
-       const sub2 = sub1.replace('--l','')
-       client.user.setActivity(sub2, { type: 'LISTENING'});
-       message.channel.send(`I am now listening to ${sub2}, master ${author}!`)
-    } else {
-      if (sub1.toLowerCase().includes("--w")) {
-        manualStatus = true
-        const sub2 = sub1.replace('--w','')
-        client.user.setActivity(sub2, { type: 'WATCHING'});
-        message.channel.send(`I am now watching ${sub2}, master ${author}!`)
-      } else {
-         if (sub1.toLowerCase().includes("--a")) {
-           manualStatus = false
-           if (statusBot) {
-              client.user.setActivity("Meleeeee!");
-           } else {
-              client.user.setActivity("DELTARUNE chap. 2");
-           }
-           message.channel.send(`My status will now automatically change every 20 minutes, master ${author}!`)
-         } else {
-           manualStatus = true
-           client.user.setActivity(sub1);
-             message.channel.send(`I am now playing ${sub1}, master ${author}`)
-         }
-      }
-    }
-  } else {
-    message.channel.send(`You're not my master, ${author}.`)
-  }
-
-} else {
+if (order.includes("status")) botprefix.status(client, message, author, args, order, globals); else {
 
   if (order.includes("be")) {
 
@@ -157,7 +123,7 @@ if (order.includes("status")) {
            globals.thour -= 24
          }
          if (order.includes("--msg")) {
-           globals.timeOutMessage = order.substring(order.indexOf("--msg") + 5)
+           globals.timeOutMessage = args.substring(order.indexOf("--msg") + 5)
          } else {
             if (!globals.special) {
              globals.timeOutMessage = "Alarm"
