@@ -30,7 +30,10 @@ for (var item in musicreturned.globals) {
 
 if (order.includes("intro")) botprefix.intro(Discord, args, message); else {
 
-if (order.includes("status")) let statusreturned = botprefix.status(client, message, author, args, order, globals); else {
+if (order.includes("status")) {
+   let statusreturned = botprefix.status(client, message, author, args, order, globals)
+   globals.manualStatus = statusreturned
+} else {
 
 if (order.includes("be")) botprefix.be(client, message, author, order); else {
 
