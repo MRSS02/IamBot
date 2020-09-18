@@ -2,7 +2,8 @@ const botprefix = {
   help: require("./botprefix/help.js"),
   music: require("./botprefix/music.js"),
   intro: require("./botprefix/intro.js"),
-  status: require("./botprefix/status.js")
+  status: require("./botprefix/status.js"),
+  be: require("./botprefix/be.js")
 }
 
 module.exports = function(play, link, order, args, author, owner,
@@ -29,33 +30,9 @@ for (var item in musicreturned.globals) {
 
 if (order.includes("intro")) botprefix.intro(Discord, args, message); else {
 
-if (order.includes("status")) botprefix.status(client, message, author, args, order, globals); else {
+if (order.includes("status")) let statusreturned = botprefix.status(client, message, author, args, order, globals); else {
 
-  if (order.includes("be")) {
-
-    if (message.author.id == 307335427331850242) {
-      if (order.includes("online")) {
-        client.user.setStatus("online").then(message.channel.send(`I am now online, master ${author}!`))
-      } else {
-        if (order.includes("idle")) {
-          client.user.setStatus("idle").then(message.channel.send(`I am now idle, master ${author}!`))
-        } else {
-          if (order.includes("dnd") || order.includes("do not disturb") || order.includes("don't disturb")) {
-            client.user.setStatus("dnd").then(message.channel.send(`I am on do not disturb mode, master ${author}!`))
-          } else {
-            if (order.includes("invisible")) {
-              client.user.setStatus("invisible").then(message.channel.send(`I am now invisible, master ${author}!`))
-            } else {
-              message.channel.send(`Master, you didn't specify a valid status!`)
-            }
-          }
-        }
-      }
-    } else {
-      message.channel.send(`You're not my master, ${author}.`)
-    }
-
-} else {
+if (order.includes("be")) botprefix.be(client, message, author, order); else {
 
   if (order.includes("time")) {
    if (message.author.id == 307335427331850242) {

@@ -33,5 +33,5 @@ module.exports = function(client, message, author, args, order, globals) {
       message.channel.send(`You're not my master, ${author}.`)
     }
 
-  return globals
+  return globals.manualStatus
 }
