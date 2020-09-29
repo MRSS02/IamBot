@@ -1,6 +1,7 @@
 const setup = require("./scripts/setup.js")
 const checktime = require("./scripts/checktime.js")
 const commands = require("./scripts/commandindex.js")
+const randomMessage = require("./scripts/randomMessage.js")
 const Discord = require("discord.js");
 const client = new Discord.Client();
 const god = require('fs')
@@ -10,6 +11,8 @@ const readline = require('readline');
 const token = setup.startup()
 const globals = {
   dblogin: setup.setDB(),
+  messageChannels: setup.setMsgchannels(),
+  messages: setup.setMsgs(),
   trustlist: setup.trustlist(),
   blocklist: setup.blocklist(),
   special: setup.special(),
@@ -43,7 +46,7 @@ const globals = {
 }
 const setdb = require('mongodb').MongoClient;
 const Database = new setdb(globals.dblogin, { useUnifiedTopology: true })
-Database.connect((error, db) => { 
+Database.connect((error, db) => {
   let dbo = db.db("teste0")
   dbo.collection("teste1").findOne({}, function(err, result) {
     if (err) throw err;
@@ -65,7 +68,6 @@ async function updatetime() {
 }
 
 
-
 //Initializing the bot
 client.on("ready", () => {
   console.log(`Hey. I was initialized inside ${client.guilds.cache.size} servers.`);
@@ -74,6 +76,7 @@ client.on("ready", () => {
   updatetime()
   setInterval(changeStatus, 1200000)
   setInterval(updatetime, 60000)
+  setInterval(randomMessage, 1200000, client, globals)
 });
 
 //This is logged when the bot enters a new server.

@@ -8,8 +8,20 @@ const botprefix = {
   reply: require("./botprefix/reply.js")
 }
 
+const replycommands = [
+  "laugh", "revive", "server", "thank", "you", "hi"
+]
+
 module.exports = function(play, link, order, args, author, owner,
 fchar, message, client, Discord, globals, checktime, god, ytdl, ytsr, sameserver) {
+
+let reply
+for (let x = 0; x < replycommands.length; x++) {
+  if (order.includes(replycommands[x])) {
+    reply = true
+    break;
+  }
+}
 
 //async function where the commands are interpreted
 async function wait() {
@@ -46,7 +58,7 @@ if (order.includes("time") || order.includes("alarm")) {
 
 } else {
 
-if (order.includes("laugh") || order.includes("revive") && order.includes("server")) botprefix.reply(message, author, args, order); else {
+if (reply) botprefix.reply(message, author, args, order); else {
 
 if (order.includes("trust")) {
   let trust = args.substring(order.indexOf("trust") + 5)
@@ -254,32 +266,6 @@ if (order.includes("trust")) {
 
 } else {
 
- if (order.includes("hi")) {
-  if (message.author.id == 307335427331850242) {
-      message.channel.send(`Hi, master ${author}. How can I serve you?`)
-  } else {
-    if (globals.trustlist[message.guild.id].includes(message.author.id)) {
-      message.channel.send(`Hi, ${author}. \nAs you are Master's friend, you're welcome. \nHow can I serve you?`)
-    } else {
-      message.channel.send(`You're not my master, ${author}.`)
-    }
-  }
-
-} else {
-
-if (order.includes("thanks") || order.includes("thank you")) {
- if (message.author.id == 307335427331850242) {
-     message.channel.send(`You're welcome, master ${author}!`)
- } else {
-   if (globals.trustlist[message.guild.id].includes(message.author.id)) {
-     message.channel.send(`You're welcome, <@${message.author.id}>.`)
-   } else {
-     message.channel.send(`You're not my master, ${author}.`)
-   }
- }
-
-} else {
-
   if (message.author.id == 307335427331850242) {
     message.channel.send(`I didn't quite understand your order, master ${author}.`)
   } else {
@@ -290,8 +276,6 @@ if (order.includes("thanks") || order.includes("thank you")) {
     }
   }
 
-}
-}
 }
 }
 }

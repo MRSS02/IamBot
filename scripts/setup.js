@@ -37,6 +37,44 @@ exports.setDB = function() {
   return dblogin
 }
 
+exports.setMsgchannels = function () {
+  let channels = []
+  let channelpath = "./data/channels"
+  try {
+    if (god.existsSync(channelpath)) {
+      readline.createInterface({
+          input: god.createReadStream(`./data/channels`),
+          terminal: false
+      }).on('line', function(line) {
+         channels.push(line)
+      });
+    }
+  }
+  catch (error) {
+    console.log(error)
+  }
+  return channels
+}
+
+exports.setMsgs = function () {
+  let messages = []
+  let channelpath = "./data/msgs"
+  try {
+    if (god.existsSync(channelpath)) {
+      readline.createInterface({
+          input: god.createReadStream(`./data/msgs`),
+          terminal: false
+      }).on('line', function(line) {
+         messages.push(line)
+      });
+    }
+  }
+  catch (error) {
+    console.log(error)
+  }
+  return messages
+}
+
 exports.trustlist = function() {
   let dir3 = "./data/trustlist"
   let trustlist = {}
