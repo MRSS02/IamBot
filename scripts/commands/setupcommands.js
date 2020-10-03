@@ -21,7 +21,7 @@ module.exports = function(message, globals) {
   } else {
      author = message.guild.member(message.author).nickname
   }
-  } catch (error) {
+  } catch () {
     author = message.author.username
   }
 

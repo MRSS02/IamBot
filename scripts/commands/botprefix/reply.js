@@ -1,4 +1,4 @@
-module.exports = function(message, author, args, order) {
+module.exports = function(message, author, args, order, globals) {
 
 if (order.includes("laugh")) {
    if (message.author.id == 307335427331850242) {
