@@ -8,13 +8,15 @@ const god = require('fs')
 const readline = require('readline');
 
 //Setting up the bot
+const setdb = require('mongodb').MongoClient;
+const dblogin = setup.setDB()
+const Database = new setdb(dblogin, { useUnifiedTopology: true })
 const token = setup.startup()
 const globals = {
-  dblogin: setup.setDB(),
   messageChannels: setup.setMsgchannels(),
   messages: setup.setMsgs(),
-  trustlist: setup.trustlist(),
-  blocklist: setup.blocklist(),
+  trustlist: setup.trustlist(Database),
+  blocklist: setup.blocklist(Database),
   special: setup.special(),
   plist: setup.playlistmake(),
   helpcommands: setup.sethelp(),
@@ -44,16 +46,17 @@ const globals = {
   alarm: false,
   currentTime: false
 }
-const setdb = require('mongodb').MongoClient;
-const Database = new setdb(globals.dblogin, { useUnifiedTopology: true })
+
 Database.connect((error, db) => {
   let dbo = db.db("teste0")
   dbo.collection("teste1").findOne({}, function(err, result) {
     if (err) throw err;
-    console.log(result.name);
+    console.log(result);
     db.close();
   });
 })
+
+
 async function changeStatus() {
   let returnedStatus = setup.changeStatus(globals, client)
   globals.statusBot = returnedStatus

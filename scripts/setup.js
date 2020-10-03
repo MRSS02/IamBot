@@ -75,11 +75,23 @@ exports.setMsgs = function () {
   return messages
 }
 
-exports.trustlist = function() {
+exports.trustlist = function(Database) {
   let dir3 = "./data/trustlist"
   let trustlist = {}
   if (!god.existsSync(dir3)){
-      god.mkdirSync(dir3);
+    Database.connect((error, db) => {
+      let dbo = db.db("lists")
+      dbo.collection("trustlist", (error, collection) => {
+        if (error) return console.log(error)
+        collection.countDocuments({}, function(error, num) {
+          for (x = 0; x < num; x++) {
+            collection.findOne({ "index": x }, function(error, result) {
+              trustlist[result.serverid] = result.users
+            })
+          }
+        })
+      })
+    })
   } else {
     god.readdir(dir3, function(error, files) {
       if (error) {
@@ -100,11 +112,23 @@ exports.trustlist = function() {
   return trustlist
 }
 
-exports.blocklist = function() {
+exports.blocklist = function(Database) {
   let dir3 = "./data/blocklist"
   let blocklist = {}
   if (!god.existsSync(dir3)){
-      god.mkdirSync(dir3);
+    Database.connect((error, db) => {
+      let dbo = db.db("lists")
+      dbo.collection("blocklist", (error, collection) => {
+        if (error) return console.log(error)
+        collection.countDocuments({}, function(error, num) {
+          for (x = 0; x < num; x++) {
+            collection.findOne({ "index": x }, function(error, result) {
+              blocklist[result.serverid] = result.users
+            })
+          }
+        })
+      })
+    })
   } else {
     god.readdir(dir3, function(error, files) {
       if (error) {
