@@ -1,3 +1,5 @@
+const setdb = require('mongodb').MongoClient;
+
 module.exports = function(god, message, author, args, order, globals) {
   if (order.includes("trust")) {
     let trust = args.substring(order.indexOf("trust") + 5)
@@ -35,8 +37,34 @@ module.exports = function(god, message, author, args, order, globals) {
             if (id != trust) return id
           }
           globals.blocklist[message.guild.id] = globals.blocklist[message.guild.id].filter(data)
-          let data0 = globals.blocklist[message.guild.id].join("\n")
-          let rewrite = god.promises.writeFile(`./data/blocklist/${message.guild.id}`, data0, 'utf8', {'flags': 'r+'});
+          const Database = new setdb(globals.dblogin, { useUnifiedTopology: true })
+          Database.connect((error, db) => {
+            let dbo = db.db("lists")
+            let index
+            let serverid = message.guild.id
+            dbo.collection("blocklist", (error, collection) => {
+              if (error) return console.log(error)
+              collection.countDocuments({}, function(error, num) {
+                index = num
+              })
+            dbo.collection("blocklist").findOne({ "serverid" : serverid }, function(err, result) {
+              if (err) return console.log(err);
+              console.log("abacaxi com maracujá")
+              if (!result) {
+                let blocked = globals.blocklist[message.guild.id]
+                let serverlist = { "serverid" : serverid, "users": [blocked], "index": index }
+                dbo.collection("blocklist").insertOne(serverlist, function(err, result) {
+                if (error) console.log(error); else console.log(serverlist)
+                })
+              } else {
+                let serverlist = { $set: {"users": blocked} }
+                collection.updateOne({"serverid" : serverid }, serverlist, function(err, result) {
+                  if (error) console.log(error); else console.log(result.users)
+                })
+              }
+            })
+          })
+          })
         }
 
         if (globals.trustlist[message.guild.id].includes(trust)) {
@@ -47,8 +75,35 @@ module.exports = function(god, message, author, args, order, globals) {
            message.channel.send(`${author}, I already trust ${trustable}.`)
           }
           } else {
-          let add = god.promises.appendFile(`./data/trustlist/${[message.guild.id]}`, `${trust}\n`, 'utf8', {'flags': 'a+'});
           globals.trustlist[message.guild.id].push(trust)
+          const Database = new setdb(globals.dblogin, { useUnifiedTopology: true })
+          Database.connect((error, db) => {
+            let dbo = db.db("lists")
+            let index
+            let serverid = message.guild.id
+            dbo.collection("trustlist", (error, collection) => {
+              if (error) return console.log(error)
+              collection.countDocuments({}, function(error, num) {
+                index = num
+              })
+            collection.findOne({ "serverid" : serverid }, function(err, result) {
+              if (err) return console.log(err);
+              console.log("cereja")
+              if (!result) {
+                let serverlist = { "serverid" : serverid, "users": [trust], "index": index }
+                collection.insertOne(serverlist, function(err, result) {
+                if (error) console.log(error); else console.log(serverlist)
+                })
+              } else {
+                let serverlist = { $set: {"users": globals.trustlist[message.guild.id]} }
+                collection.updateOne({"serverid" : serverid }, serverlist, function(err, result) {
+                  if (error) console.log(error); else console.log(result.users)
+                })
+              }
+
+            })
+          })
+          })
           if (message.author.id == 307335427331850242) {
            message.channel.send(`I now trust ${trustable}, master!`)
           } else {

@@ -47,15 +47,34 @@ const globals = {
   currentTime: false
 }
 
+//logging database data for test purposes;
 Database.connect((error, db) => {
-  let dbo = db.db("teste0")
-  dbo.collection("teste1").findOne({}, function(err, result) {
-    if (err) throw err;
-    console.log(result);
-    db.close();
-  });
+  let dbo = db.db("lists")
+  dbo.collection("trustlist", (error, collection) => {
+    if (error) return console.log(error)
+    collection.countDocuments({}, function(error, num) {
+      console.log(`${num} servers have a trustlist \n`)
+      for (x = 0; x < num; x++) {
+        collection.findOne({ "index": x }, function(error, result) {
+            console.log(result.serverid + ":\n" + result.users + "\n\n");
+        })
+      }
+    })
+  })
+  dbo.collection("blocklist", (error, collection) => {
+    if (error) return console.log(error)
+    collection.countDocuments({}, function(error, num) {
+        console.log(`${num} servers have a blocklist \n`)
+      for (x = 0; x < num; x++) {
+        collection.findOne({ "index": x }, function(error, result) {
+            console.log(result.serverid + ":\n" + result.users + "\n\n");
+        })
+      }
+    })
+  })
 })
 
+globals.dblogin = dblogin
 
 async function changeStatus() {
   let returnedStatus = setup.changeStatus(globals, client)
@@ -96,7 +115,7 @@ client.on("guildDelete", guild => {
 //This sets the bot commands.
 client.on("message", async message => {
 let returned = await commands(client, message, globals,
-updatetime, Discord, Database, god)
+updatetime, Discord, god)
 //recover returned variable data
 for (var item in returned) {
   globals[item] = returned[item]
