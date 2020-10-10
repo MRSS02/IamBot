@@ -49,9 +49,8 @@ module.exports = function(god, message, author, args, order, globals) {
               })
             dbo.collection("blocklist").findOne({ "serverid" : serverid }, function(err, result) {
               if (err) return console.log(err);
-              console.log("abacaxi com maracujá")
+              let blocked = globals.blocklist[message.guild.id]
               if (!result) {
-                let blocked = globals.blocklist[message.guild.id]
                 let serverlist = { "serverid" : serverid, "users": [blocked], "index": index }
                 dbo.collection("blocklist").insertOne(serverlist, function(err, result) {
                 if (error) console.log(error); else console.log(serverlist)
@@ -88,7 +87,6 @@ module.exports = function(god, message, author, args, order, globals) {
               })
             collection.findOne({ "serverid" : serverid }, function(err, result) {
               if (err) return console.log(err);
-              console.log("cereja")
               if (!result) {
                 let serverlist = { "serverid" : serverid, "users": [trust], "index": index }
                 collection.insertOne(serverlist, function(err, result) {
@@ -157,19 +155,70 @@ module.exports = function(god, message, author, args, order, globals) {
            if (id != block) return id
          }
          globals.trustlist[message.guild.id] = globals.trustlist[message.guild.id].filter(data)
-         let data0 = globals.trustlist[message.guild.id].join("\n")
-         let rewrite = god.promises.writeFile(`./data/trustlist/${message.guild.id}`, data0, 'utf8', {'flags': 'r+'});
+         const Database = new setdb(globals.dblogin, { useUnifiedTopology: true })
+         Database.connect((error, db) => {
+           let dbo = db.db("lists")
+           let index
+           let serverid = message.guild.id
+           dbo.collection("trustlist", (error, collection) => {
+             if (error) return console.log(error)
+             collection.countDocuments({}, function(error, num) {
+               index = num
+             })
+           dbo.collection("trustlist").findOne({ "serverid" : serverid }, function(err, result) {
+             if (err) return console.log(err);
+             let trusted = globals.trustlist[message.guild.id]
+             if (!result) {
+               let serverlist = { "serverid" : serverid, "users": [trusted], "index": index }
+               dbo.collection("trustlist").insertOne(serverlist, function(err, result) {
+               if (error) console.log(error); else console.log(serverlist)
+               })
+             } else {
+               let serverlist = { $set: {"users": trusted} }
+               collection.updateOne({"serverid" : serverid }, serverlist, function(err, result) {
+                 if (error) console.log(error); else console.log(result.users)
+               })
+             }
+           })
+         })
+         })
+
        }
          if (globals.blocklist[message.guild.id].includes(block)) {
            if (message.author.id == 307335427331850242) {
-             const m = message.channel.send(`Master, I already blocked ${blockable}.`)
+            message.channel.send(`Master, I already blocked ${blockable}.`)
            } else {
-             const m = message.channel.send(`${author}, I already blocked ${blockable}.`)
+            message.channel.send(`${author}, I already blocked ${blockable}.`)
            }
-
-         } else {
-           let add = god.promises.appendFile(`./data/blocklist/${message.guild.id}`, `${block}\n`, 'utf8', {'flags': 'a+'});
+           } else {
            globals.blocklist[message.guild.id].push(block)
+           const Database = new setdb(globals.dblogin, { useUnifiedTopology: true })
+           Database.connect((error, db) => {
+             let dbo = db.db("lists")
+             let index
+             let serverid = message.guild.id
+             dbo.collection("blocklist", (error, collection) => {
+               if (error) return console.log(error)
+               collection.countDocuments({}, function(error, num) {
+                 index = num
+               })
+             collection.findOne({ "serverid" : serverid }, function(err, result) {
+               if (err) return console.log(err);
+               if (!result) {
+                 let serverlist = { "serverid" : serverid, "users": [block], "index": index }
+                 collection.insertOne(serverlist, function(err, result) {
+                 if (error) console.log(error); else console.log(serverlist)
+                 })
+               } else {
+                 let serverlist = { $set: {"users": globals.blocklist[message.guild.id]} }
+                 collection.updateOne({"serverid" : serverid }, serverlist, function(err, result) {
+                   if (error) console.log(error); else console.log(result.users)
+                 })
+               }
+
+             })
+           })
+           })
            if (message.author.id == 307335427331850242) {
              message.channel.send(`I blocked ${blockable}, master.`)
            } else {
@@ -220,8 +269,34 @@ module.exports = function(god, message, author, args, order, globals) {
            if (id != rest) return id
          }
          globals.trustlist[message.guild.id] = globals.trustlist[message.guild.id].filter(data)
-         let data0 = globals.trustlist[message.guild.id].join("\n")
-         god.promises.writeFile(`./data/trustlist/${message.guild.id}`, data0, 'utf8', {'flags': 'r+'});
+         const Database = new setdb(globals.dblogin, { useUnifiedTopology: true })
+         Database.connect((error, db) => {
+           let dbo = db.db("lists")
+           let index
+           let serverid = message.guild.id
+           dbo.collection("trustlist", (error, collection) => {
+             if (error) return console.log(error)
+             collection.countDocuments({}, function(error, num) {
+               index = num
+             })
+           dbo.collection("trustlist").findOne({ "serverid" : serverid }, function(err, result) {
+             if (err) return console.log(err);
+             let trusted = globals.trustlist[message.guild.id]
+             if (!result) {
+               let serverlist = { "serverid" : serverid, "users": [trusted], "index": index }
+               dbo.collection("trustlist").insertOne(serverlist, function(err, result) {
+               if (error) console.log(error); else console.log(serverlist)
+               })
+             } else {
+               let serverlist = { $set: {"users": trusted} }
+               collection.updateOne({"serverid" : serverid }, serverlist, function(err, result) {
+                 if (error) console.log(error); else console.log(result.users)
+               })
+             }
+           })
+         })
+         })
+
          if (message.author.id == 307335427331850242) {
          message.channel.send(`I stopped trusting ${restable}, master.`)
          } else {
@@ -234,8 +309,33 @@ module.exports = function(god, message, author, args, order, globals) {
              if (id != rest) return id
            }
            globals.blocklist[message.guild.id] = globals.blocklist[message.guild.id].filter(data)
-           let data0 = globals.blocklist[message.guild.id].join("\n")
-           let rewrite = god.promises.writeFile(`./data/blocklist/${message.guild.id}`, data0, 'utf8', {'flags': 'r+'});
+           const Database = new setdb(globals.dblogin, { useUnifiedTopology: true })
+           Database.connect((error, db) => {
+             let dbo = db.db("lists")
+             let index
+             let serverid = message.guild.id
+             dbo.collection("blocklist", (error, collection) => {
+               if (error) return console.log(error)
+               collection.countDocuments({}, function(error, num) {
+                 index = num
+               })
+             dbo.collection("blocklist").findOne({ "serverid" : serverid }, function(err, result) {
+               if (err) return console.log(err);
+               let blocked = globals.blocklist[message.guild.id]
+               if (!result) {
+                 let serverlist = { "serverid" : serverid, "users": [blocked], "index": index }
+                 dbo.collection("blocklist").insertOne(serverlist, function(err, result) {
+                 if (error) console.log(error); else console.log(serverlist)
+                 })
+               } else {
+                 let serverlist = { $set: {"users": blocked} }
+                 collection.updateOne({"serverid" : serverid }, serverlist, function(err, result) {
+                   if (error) console.log(error); else console.log(result.users)
+                 })
+               }
+             })
+           })
+           })
            if (message.author.id == 307335427331850242) {
             message.channel.send(`I unblocked ${restable}, master.`)
            } else {

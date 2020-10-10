@@ -98,7 +98,7 @@ client.on("ready", () => {
   updatetime()
   setInterval(changeStatus, 1200000)
   setInterval(updatetime, 60000)
-  setInterval(randomMessage, 1200000, client, globals)
+  setInterval(randomMessage, 7200000, client, globals)
 });
 
 //This is logged when the bot enters a new server.

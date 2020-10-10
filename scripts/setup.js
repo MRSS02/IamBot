@@ -326,7 +326,7 @@ exports.sethelp = function() {
       description: "Sets an alarm for the bot to say. Can only be used by whitelisted users.\nSpecial flags:\n`--h` - sets the hour for the alarm. Must be specified, unless delete or default message flags are in use.\n`--min` - sets the minute for the alarm; if not used, minute will be 0.\n`--dat` - sets the date for the alarm; if not used, day will be the closest possible.\n`--mon` - sets the month for the alarm; if not used, month will be the closest possible.\n`--y` - sets the year for the alarm; if not used, year will be the closest possible\n`--msg` - sets the alarm message; if not used, message will be the default one\n`--dm` - When used, the reply message sent when setting an alarm will be sent via direct message to the person who set up the alarm instead.\n`--g` - sets the default message for the alarm. Can only be used by my master.\nCan't be used with other flags at the same time.\n`--del` - Deletes a predefined alarm. Can't be used with other flags at the same time.\n"
     },
     {
-      prefix: "`bot!` + `hi`, `bot!` + `thanks`, `bot!` + `revive` + server`",
+      prefix: "`bot!` + `hi`, `bot!` + `thanks`, `bot!` + `revive` + `server`",
       description: "Bot replies with predefined messages"
     }
 

@@ -23,8 +23,7 @@ author, owner, message, Discord, globals) {
       if (cmdtofind.prefix.includes(searchitem)) return cmdtofind
     }
     let foundcmd = globals.helpcommands.user.filter(findcmd)
-    if (!foundcmd[0]) foundcmd = globals.helpcommands.user.filter(findcmd); else foundcmd = foundcmd.concat(globals.helpcommands.user.filter(findcmd))
-    console.log(foundcmd)
+    foundcmd = foundcmd.concat(globals.helpcommands.dev.filter(findcmd))
     if (!foundcmd[0]) cmderror = true
     if (cmderror) {
       emb.setTitle("I couldn't find any commands under that name.")
@@ -149,15 +148,15 @@ author, owner, message, Discord, globals) {
   if (cmderror) {
     if (message.author.id == 307335427331850242) {
       if (order.includes("--dm")) {
-        const m = client.users.cache.get(`${usrid}`).send("Master, I couldn't find that command.")
+        const m = client.users.cache.get(`${usrid}`).send("Master, I couldn't find that command in the help data.")
       } else {
-        const m = message.channel.send("Master, I couldn't find that command.")
+        const m = message.channel.send("Master, I couldn't find that command in the help data.")
       }
     } else {
       if (order.includes("--dm")) {
-        const m =client.users.cache.get(`${usrid}`).send(`${author}, I couldn't find that command.`)
+        const m =client.users.cache.get(`${usrid}`).send(`${author}, I couldn't find that command in the help data.`)
       } else {
-        const m = message.channel.send(`${author}, I couldn't find that command.`)
+        const m = message.channel.send(`${author}, I couldn't find that command  in the help data.`)
       }
     }
   } else {
