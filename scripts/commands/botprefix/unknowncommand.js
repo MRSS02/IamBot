@@ -3,6 +3,5 @@ module.exports = function(message, globals) {
       message.channel.send(`I didn't quite understand what you mean, master ${author}.`)
   } else {
       message.channel.send(`I didn't quite understand what you mean, ${author}.`)
-    }
   }
 }

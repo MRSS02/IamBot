@@ -88,7 +88,7 @@ if (order.includes("trust") || order.includes("block") || order.includes("reset"
 }
 }
 }
-}
+
 
 
 wait().then() //bloking the code on purpose cause I need it
