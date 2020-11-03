@@ -144,7 +144,7 @@ async function wait() {
        }
       }
       if (!message.member.voice.connection) {
-        console.log(message.guild.me.voice.connection) 
+        console.log(message.guild.me.voice.connection)
         if (checkvalid || checkvalid2) {
         message.member.voice.channel.join().then(function(connection){
         play(connection, message).catch( error => {
