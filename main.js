@@ -3,7 +3,7 @@ const checktime = require("./scripts/checktime.js")
 const commands = require("./scripts/commandindex.js")
 const randomMessage = require("./scripts/randomMessage.js")
 const Discord = require("discord.js");
-const client = new Discord.Client({ ws: { intents: ['GUILD_PRESENCES', 'GUILD_MEMBERS'] }});
+const client = new Discord.Client();
 const god = require('fs')
 const readline = require('readline');
 
