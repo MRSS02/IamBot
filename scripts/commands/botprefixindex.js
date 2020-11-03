@@ -77,7 +77,7 @@ if (order.includes("trust") || order.includes("block") || order.includes("reset"
     globals[item] = listreturned.globals[item]
   }
 
-} else botprefix.unknowncommand(message, globals);
+} else botprefix.unknowncommand(message, author, globals);
 
 }
 }
