@@ -8,7 +8,8 @@ const botprefix = {
   reply: require("./botprefix/reply.js"),
   userlist: require("./botprefix/userlist.js"),
   checkemotes: require("./botprefix/checkemotes.js"),
-  editemotes: require("./botprefix/checkemotes.js")
+  editemotes: require("./botprefix/editemotes.js"),
+  unknowncommand: require("./botprefix/unknowncommand.js")
 }
 
 const replycommands = [
@@ -75,6 +76,9 @@ if (order.includes("trust") || order.includes("block") || order.includes("reset"
   for (let item in listreturned.globals) {
     globals[item] = listreturned.globals[item]
   }
+
+} else botprefix.unknowncommand(message, globals);
+
 }
 }
 }
