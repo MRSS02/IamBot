@@ -41,7 +41,7 @@ if (message.guild) {
 if (nextstep) {
 
 //setup
-let setupcommandsreturned = commands.setupcommands(message, globals)
+let setupcommandsreturned = commands.setupcommands(client, message, globals)
 let play
 let link = setupcommandsreturned.link
 let args = setupcommandsreturned.args

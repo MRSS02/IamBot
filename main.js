@@ -20,7 +20,7 @@ const globals = {
   special: setup.special(),
   plist: setup.playlistmake(),
   helpcommands: setup.sethelp(),
-  serveremojis: setup.setserveremojis(),
+  serveremojis: setup.setserveremojis(Database),
   playingpriv: false,
   privqueue: 0,
   cserverp: false,

@@ -6,7 +6,9 @@ const botprefix = {
   be: require("./botprefix/be.js"),
   time: require("./botprefix/time.js"),
   reply: require("./botprefix/reply.js"),
-  userlist: require("./botprefix/userlist.js")
+  userlist: require("./botprefix/userlist.js"),
+  checkemotes: require("./botprefix/checkemotes.js"),
+  editemotes: require("./botprefix/checkemotes.js")
 }
 
 const replycommands = [
@@ -41,6 +43,13 @@ for (let item in musicreturned.globals) {
 
 } else {
 
+if (order.includes("emotes") && order.includes("check") ||
+order.includes("emotes") && order.includes("chck")) botprefix.checkemotes(Discord,
+order, message, globals); else {
+
+if (order.includes("edit") && order.includes("emotes")) botprefix.editemotes(order,
+message, globals)
+
 if (order.includes("intro")) botprefix.intro(Discord, args, message); else {
 
 if (order.includes("status")) {
@@ -66,6 +75,7 @@ if (order.includes("trust") || order.includes("block") || order.includes("reset"
   for (let item in listreturned.globals) {
     globals[item] = listreturned.globals[item]
   }
+}
 }
 }
 }

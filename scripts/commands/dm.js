@@ -49,6 +49,7 @@ module.exports = function(fchar, args, message, client) {
      }
      }
      if (message.author.id == 307335427331850242 && !isNaN(fchar)) {
+        console.log("testing")
         client.users.cache.get(id).send(dm).catch(error =>{
         message.author.send(`I couldn't send "${dm}" to ${id}.`)
       })

@@ -76,9 +76,7 @@ exports.setMsgs = function () {
 }
 
 exports.trustlist = function(Database) {
-  let dir3 = "./data/trustlist"
   let trustlist = {}
-  if (!god.existsSync(dir3)){
     Database.connect((error, db) => {
       let dbo = db.db("lists")
       dbo.collection("trustlist", (error, collection) => {
@@ -92,30 +90,12 @@ exports.trustlist = function(Database) {
         })
       })
     })
-  } else {
-    god.readdir(dir3, function(error, files) {
-      if (error) {
-        console.log(error)
-        return;
-      }
-      files.forEach(function(filename) {
-        trustlist[filename] = []
-        readline.createInterface({
-            input: god.createReadStream(`${dir3}/${filename}`),
-            terminal: false
-        }).on('line', function(line) {
-           trustlist[filename].push(line)
-        });
-      })
-    })
-  }
+
   return trustlist
 }
 
 exports.blocklist = function(Database) {
-  let dir3 = "./data/blocklist"
   let blocklist = {}
-  if (!god.existsSync(dir3)){
     Database.connect((error, db) => {
       let dbo = db.db("lists")
       dbo.collection("blocklist", (error, collection) => {
@@ -129,23 +109,6 @@ exports.blocklist = function(Database) {
         })
       })
     })
-  } else {
-    god.readdir(dir3, function(error, files) {
-      if (error) {
-        console.log(error)
-        return;
-      }
-      files.forEach(function(filename) {
-        blocklist[filename] = []
-        readline.createInterface({
-            input: god.createReadStream(`${dir3}/${filename}`),
-            terminal: false
-        }).on('line', function(line) {
-           blocklist[filename].push(line)
-        });
-      })
-    })
-  }
   return blocklist
 }
 
@@ -222,29 +185,22 @@ exports.playlistmake = function() {
 
 }
 
-exports.setserveremojis = function() {
+exports.setserveremojis = function(Database) {
 
   let serveremojis = {}
-  let dir3 = "./data/serveremojis";
-  if (!god.existsSync(dir3)){
-      god.mkdirSync(dir3);
-  } else {
-    god.readdir(dir3, function(error, files) {
-      if (error) {
-        console.log(error)
-        return;
-      }
-      files.forEach(function(filename) {
-        serveremojis[filename] = []
-        readline.createInterface({
-            input: god.createReadStream(`${dir3}/${filename}`),
-            terminal: false
-        }).on('line', function(line) {
-           serveremojis[filename].push(line)
-        });
+  Database.connect((error, db) => {
+    let dbo = db.db("lists")
+    dbo.collection("emotelist", (error, collection) => {
+      if (error) return console.log(error)
+      collection.countDocuments({}, function(error, num) {
+        for (x = 0; x < num; x++) {
+          collection.findOne({ "index": x }, function(error, result) {
+            serveremojis[result.serverid] = result.emotes
+          })
+        }
       })
     })
-  }
+  })
 
   return serveremojis
 
@@ -300,6 +256,10 @@ exports.sethelp = function() {
     {
       prefix: "`bot!` + `intro`",
       description: "The bot sends out the default introduction message, in embedded format.\nSpecial flags:\n`--c` - Sets the message color to given hexadecimal value, else default color will be used."
+    },
+    {
+      prefix: "`bot!` + `checkemotes`",
+      description: "Sends a message to the user, containing a list of the usable emotes by the bot.\n Only usable if the user has the permission to manage emotes in the curent server, or if the user is in the trustlist"
     },
     {
       prefix: "`bot!` + `play`",

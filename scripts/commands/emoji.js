@@ -2,6 +2,7 @@ module.exports = function(args, message, globals) {
   let emoji
   let animoji
   let emojiname
+  if (!globals.serveremojis[message.guild.id]) globals.serveremojis[message.guild.id] = [] 
   if (args.includes("!a<") && args.includes(">!")) animoji = true;
   if (args.includes("!<") && args.includes(">!")) emoji = true
   if (message.channel.type === "dm") {

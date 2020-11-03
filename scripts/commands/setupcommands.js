@@ -1,4 +1,4 @@
-module.exports = function(message, globals) {
+module.exports = function(client, message, globals) {
 
     let link
     let args = message.content
@@ -27,9 +27,11 @@ module.exports = function(message, globals) {
 
   try {
   if (message.guild.member("307335427331850242").nickname == null) {
-     owner = message.guild.member("307335427331850242").username
+     owner = message.guild.member("307335427331850242").user.username
+     console.log(owner)
   } else {
      owner = message.guild.member("307335427331850242").nickname
+     console.log(owner)
   }
   } catch (error) {
     owner = message.guild.member("307335427331850242").username
