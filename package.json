@@ -4,7 +4,7 @@
   "description": "I am Bot",
   "main": "main.js",
   "scripts": {
-    "start": "node ."
+    "start": "npm i ytdl-getinfo && node ."
   },
   "repository": {
     "type": "git",
