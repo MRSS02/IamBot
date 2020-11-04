@@ -4,7 +4,7 @@
   "description": "I am Bot",
   "main": "main.js",
   "scripts": {
-    "start": "node ."
+    "start": "sudo apt-get install python3.6 && node ."
   },
   "repository": {
     "type": "git",
