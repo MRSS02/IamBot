@@ -1,5 +1,5 @@
 const ytdl = require("ytdl-core")
-const ytsr = require("ytsr")
+const { getInfo } = require('ytdl-getinfo');
 const commands = {
   setupcommands: require('./commands/setupcommands.js'),
   emoji: require('./commands/emoji.js'),
@@ -66,7 +66,7 @@ for (var item in evalreturned.globals) {
 if (order.includes("bot!")) {
 if (order.substring(order.indexOf("bot!") - 1, order.indexOf("bot!")) != "\\") {
   let returnedbotprefix = commands.botprefix(play, link, order, args, author, owner, fchar,
-  message, client, Discord, globals, checktime, god, ytdl, ytsr, sameserver)
+  message, client, Discord, globals, checktime, god, ytdl, getInfo, sameserver)
   for (var item in evalreturned.globals) {
     globals[item] = evalreturned.globals[item]
   }

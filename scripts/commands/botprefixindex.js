@@ -17,7 +17,7 @@ const replycommands = [
 ]
 
 module.exports = function(play, link, order, args, author, owner,
-fchar, message, client, Discord, globals, checktime, god, ytdl, ytsr, sameserver) {
+fchar, message, client, Discord, globals, checktime, god, ytdl, getInfo, sameserver) {
 
 let reply
 for (let x = 0; x < replycommands.length; x++) {
@@ -37,7 +37,7 @@ order.includes("skip") || order.includes("stop")) {
 
 let musicreturned = await botprefix.music(play, link,
 order, args, author, owner, fchar, message, client, globals,
-god, ytdl, ytsr, sameserver, Discord)
+god, ytdl, getInfo, sameserver, Discord)
 for (let item in musicreturned.globals) {
   globals[item] = evalreturned.globals[item]
 }

@@ -1,6 +1,6 @@
 module.exports = function(play, link,
 order, args, author, owner, fchar, message, client, globals,
-god, ytdl, ytsr, sameserver, Discord) {
+god, ytdl, getInfo, sameserver, Discord) {
 
 //async function where the commands are interpreted
 async function wait() {
@@ -16,12 +16,24 @@ async function wait() {
   let cserver
   let stream
   let temp = message.guild.id
+  let firstsong
+  let lastsong
   async function play(con, mes) {
     let splay
-    let info = await ytdl.getInfo(cserver.queue[0])
-    let infoa = await ytdl.getInfo(cserver.queue[cserver.queue.length - 1])
-    let firstsong = info.title
-    let lastsong = infoa.title
+    try {
+     let a = await getInfo(cserver.queue[0]).then(info => {
+     firstsong = info.items[0].title
+     })
+    } catch {
+     firstsong = "Unknown songname"
+    }
+    try {
+     let b = await getInfo(cserver.queue[cserver.queue.length - 1]).then(info => {
+     lastsong = info.items[0].title
+     })
+    } catch {
+     lastsong = "Unknown songname"
+    }
     stream = ytdl(cserver.queue[0], { filter: "audioonly"})
     if (!globals.pmusic.includes(message.guild.id)) splay = true; else splay = false
     if (splay) {
@@ -130,8 +142,11 @@ async function wait() {
        let options = {
        limit: 1,
        }
-       const l = await ytsr(search, options)
-       let searchlink = Object.values(Object.values(l)[1][0])[3]
+       let searchlink
+       let a = await getInfo(link).then(info => {
+       searchlink = info.items[0].webpage_url
+       console.log(searchlink)
+       })
        checkvalid2 = ytdl.validateURL(searchlink);
        if (checkvalid2) {
          cserver.queue.push(searchlink)
@@ -144,7 +159,6 @@ async function wait() {
        }
       }
       if (!message.member.voice.connection) {
-        console.log(message.guild.me.voice.connection)
         if (checkvalid || checkvalid2) {
         message.member.voice.channel.join().then(function(connection){
         play(connection, message).catch( error => {
@@ -204,8 +218,14 @@ async function wait() {
         let cserver = globals.queueservers[message.guild.id]
         let queuenames = []
         for (let x = 0; x < cserver.queue.length; x++) {
-          info = await ytdl.getInfo(cserver.queue[x])
-          let namesong = info.title
+          let namrsong
+          try {
+          let a = await getInfo(cserver.queue[x]).then(info => {
+           namesong = info.items[0].title
+          })
+          } catch {
+           namesong = "Unknown songname"
+          }
           queuenames.push(namesong)
         }
         if (`${queuenames}` == "") {
