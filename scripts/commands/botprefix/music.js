@@ -143,10 +143,20 @@ async function wait() {
        limit: 1,
        }
        let searchlink
+       try {
        let a = await getInfo(link).then(info => {
        searchlink = info.items[0].webpage_url
        console.log(searchlink)
        })
+       } catch {
+         if (message.author.id == 307335427331850242) {
+           message.channel.send(`Master, song link wasn't found.`)
+           return
+         } else {
+            message.channel.send(`${author}, song link wasn't found.`)
+            return
+         }
+       }
        checkvalid2 = ytdl.validateURL(searchlink);
        if (checkvalid2) {
          cserver.queue.push(searchlink)
