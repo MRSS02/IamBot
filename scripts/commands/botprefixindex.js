@@ -3,6 +3,7 @@ const botprefix = {
   music: require("./botprefix/music.js"),
   intro: require("./botprefix/intro.js"),
   status: require("./botprefix/status.js"),
+  poll: require("./botprefix/poll.js"),
   be: require("./botprefix/be.js"),
   time: require("./botprefix/time.js"),
   reply: require("./botprefix/reply.js"),
@@ -51,7 +52,9 @@ order, message, globals); else {
 if (order.includes("edit") && order.includes("emotes")) botprefix.editemotes(order,
 message, globals)
 
-if (order.includes("intro")) botprefix.intro(Discord, args, message); else {
+if (order.includes("intro")) botprefix.intro(Discord, args, order, owner, message); else {
+
+if (order.includes("poll")) botprefix.poll(Discord, args, order, owner, message); else {
 
 if (order.includes("status")) {
    let statusreturned = await botprefix.status(client, message, author, args, order, globals)
@@ -79,6 +82,7 @@ if (order.includes("trust") || order.includes("block") || order.includes("reset"
 
 } else botprefix.unknowncommand(message, author, globals);
 
+}
 }
 }
 }

@@ -127,7 +127,7 @@ module.exports = function(play, link, order, args, author, owner, fchar, message
               c = message.guild.member(a).nickname
             }
       if (reasonExists) {
-        client.users.cache.get(a).send(`https://cdn.discordapp.com/attachments/635571665861869605/729017344432537630/video0.mp4\n ${c}, you were banned from "${d}".\nReasom for the ban:"${reason}".`).then(() => {
+        client.users.cache.get(a).send(`https://cdn.discordapp.com/attachments/635571665861869605/729017344432537630/video0.mp4\n ${c}, you were banned from "${d}".\nReason for the ban:"${reason}".`).then(() => {
               message.guild.member(a).ban({ reason: reason }).then(() =>{
           message.channel.send(`${b}\n https://cdn.discordapp.com/attachments/635571665861869605/729017344432537630/video0.mp4`)
                  message.channel.send(`"${c}" was banned from this server.`)

@@ -1,4 +1,4 @@
-module.exports = function(Discord, args, message){
+module.exports = function(Discord, args, order, owner, message){
 
   let hexcol
   let c = args
@@ -15,7 +15,7 @@ module.exports = function(Discord, args, message){
     const emb = new Discord.MessageEmbed().setTitle(`Hello, I am Bot.`)
     .setColor(hexcol)
     .addFields(
-    { name: `I'm a bot my master, ${author}, is developing to entertain themselves and learn to code.`, value: `\n*(to know about the commands I understand, say "bot! help")*\n\nI am glad to help my master and their friends.\n||I don't like helping people i don't trust, though.||`, inline: true},
+    { name: `I'm a bot my master, ${owner}, is developing to entertain themselves and learn to code.`, value: `\n*(to know about the commands I understand, say "bot! help")*\n\nI am glad to help my master and their friends.\n||I don't like helping people i don't trust, though.||`, inline: true},
     )
     const m = message.channel.send(emb)
 

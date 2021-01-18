@@ -34,7 +34,7 @@ module.exports = function(client, message, globals) {
      console.log(owner)
   }
   } catch (error) {
-    owner = message.guild.member("307335427331850242").username
+    owner = message.guild.member("307335427331850242").user.username
   }
   }
   function sameserver(id) {
