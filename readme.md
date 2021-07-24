@@ -1,4 +1,4 @@
-###Observation: The music functionality doesn't really work anymore. Also, this bot is a mess, i'm creating another one.
+### Observation: The music functionality doesn't really work anymore. Also, this bot is a mess, i'm creating another one.
 
 To set the bot on, put the token in a file named "token" in the "data" directory; or you could set the environment variable TOKEN as the token of your bot instead. 
 
